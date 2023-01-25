@@ -1,0 +1,167 @@
+---
+title: "week 1"
+output: html_document
+date: "2023-01-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(sets)
+
+```
+
+### SETS AND FUNCTIONS
+
+# Notation
+
+M = {a,b,c}
+
+b e M
+
+order doesn matter
+
+no duplicates, can be infinite 
+
+N = set of natural numbers
+
+R = all Real numbers
+
+# parts
+
+subset - a set of a larger set
+
+element - item in a set
+
+
+Sets can share elements
+ - ven diagram
+ 
+ - Union (U)
+    - what us in either set
+    
+  - intersection (n)
+    - in both
+    
+The complement is everything NOT in the set
+
+  - A^c = everything not in set A in comparision to some larger universal set. 
+  
+```{r}
+A <- set(2,1,8)
+B <- set(9,2,6)
+
+#comp_union = function(A,B,universe = (0:9)) {}
+
+```
+  
+  
+  
+(A U B)^c = A^c n B^C
+
+
+C = {a, p, f} C < A U P U F
+
+ec e! C
+
+## Functions
+
+relationship between elements in one set with elements in another
+
+a box of algorithims 
+
+every input must get exactly one output
+
+set of inputs: Domain
+
+set of outputs: Range
+
+f: D -> R
+
+Domain and range can be the same real number -> real number
+
+
+If Domain and range are ordered you can draw a graph (D,R)
+
+functions in R  
+
+
+# Set indicator functions 
+
+  - gives true or false if an inputted element is in a given set D: elements R: True/false
+  - graph block graph range of 0 and 1 
+  
+# multiple arguements 
+ - two inputs one output
+ - graph: a 2d surface
+ - ex. indicator set of coordinates in a plane (x and y)
+ 
+ - intersection as a two arg function
+
+
+### LAB
+
+```{r}
+position <- function(t){
+  
+   y <- 5*cos(t * 2 * pi / 12)
+   
+   return(y)
+  
+  
+}
+
+
+position(3)
+```
+
+
+```{r}
+position_all <- function(t,l,r) {
+  
+  
+  hr <- 12
+  min <- 720
+  sec <- 43200
+  
+  if(r == "hr") {
+      y <- l*cos(t * 2 * pi / 12)
+  } else if( r == "min") {
+    y <- l*cos(t * 2 * pi / 720)
+  } else (r == "sec") {
+    
+     y <- l*cos(t * 2 * pi / 43200)
+  }
+  
+  
+  
+   
+   return(y)
+  
+  
+  
+}
+
+position_all(0,5,hr)
+
+
+```
+Function factories
+```{r}
+
+
+f_factory <- function(l=5,r=12){
+  
+  function(t){
+    l*cos(t * 2 * pi / r)
+  }
+}
+
+f_factory(3,12)(6)  #f_factory calls a function in which the second parenthetical is passed.
+
+```
+
+
+
+
