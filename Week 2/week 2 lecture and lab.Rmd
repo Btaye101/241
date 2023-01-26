@@ -1,0 +1,75 @@
+---
+title: "Week 2 lecture"
+output: html_document
+date: "2023-01-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## R Markdown
+
+```{r}
+sample <- tibble(w= seq(0,1,len= 1000),
+                 X = case_when(w < 0.5 ~ 1,
+                               TRUE ~ 0),
+                 )
+
+sum <- count(sample, X==1) %>% mutate(prop = n/sum(n))
+
+sum
+
+
+```
+
+# LAB
+prob 1
+```{r}
+trig <- function(x){
+  return(x^3 +x)
+  
+}
+#indicator functions tests if x is in specified interval [0,1]
+indicator <- function(x, a =0, b =1) {  
+  
+  return((x >= a) & (x <=b))
+}
+ trig(1)
+ indicator(1)
+```
+```{r}
+g <- function(x){
+ return(indicator(trig(x))) 
+  
+}
+
+g(.5)
+```
+
+```{r}
+.01*.95
+```
+prob 3
+```{r}
+grid <- expand_grid( 
+  w1 = seq(0,1, len=100), 
+  w2 = seq(0,1, len=100) 
+)
+
+
+mutated <- grid %>% mutate(inside = w1<.5 & w2<.5)
+
+prob <- mutated %>% count(inside) %>% mutate(prop = n/sum(n))
+prob
+```
+
+```{r}
+mutated_sin <- grid %>% mutate(Y = sin(w1*w2*2*pi),
+                               inside = Y > 0.5)
+
+prob_sin <- mutated_sin %>% count(inside) %>% mutate(prop = n/sum(n))
+prob_sin
+```
+
