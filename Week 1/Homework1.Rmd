@@ -16,4 +16,57 @@ library(tidyverse)
   - We can have all animals as a set with individual species as a subset. Individuals would be elements of the species subsets. Function "legs" would input an individual and output the number of legs that individual's species should have.
   
 ### 2.
-  - 
+  - $f_{legs}(x) = number of legs$
+  
+### 3.
+  - It does not capture those individuals who have lost legs due to injury. It also does not account for species that have differing amounts of legs depending on their life cycle (e.g. frogs/tadpoles). To account for these within each species subset we can also subset individuals by life cycle stage and then we can further subset by the number of legs lost due to injury.
+  
+
+## P2
+
+### 1. 
+  - There are no houses with a negative sales price.
+
+### 2.
+  - Houses in zip code A have a sales price greater than or equal to $10^7$.
+
+
+## P3
+  - $f^{-1}\{A\} \subseteq f^{-1}\{B\}$
+  
+
+## P4
+
+### 1.
+```{r eval = F}
+indicator <- function(x,y){
+  return(x> 0 & y > 0)
+}
+```
+
+### 2.
+  - {1}
+
+### 3.
+  - {0}
+
+### 4.
+  - {0,1}
+  
+
+## P5
+
+### 1.
+  - $f(A \cap B) = f(A) + f(B) - f(A \cup B)$
+  
+
+## P6
+
+### 1.
+  - For both the derivative is y=1.
+
+### 2.
+  - No. Each outputted function is not unique to its input.The previous qeustion demonstrates this.
+
+### 3.
+  - No since the outputted area over the definite integral 0 to 1 is not unique to its inputted function. We can imagine two functions that have the same shape and area in the local area from 0 to 1. Outside of these bounds the two functions can have different shapes and thus be different from each other.Thus it follows that the definite integral from 0 to 1 is not a one to one function since two different functions (inputs) can have the same output (area over the definite integral from 0 to 1)
