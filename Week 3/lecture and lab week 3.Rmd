@@ -1,0 +1,35 @@
+---
+title: "lecture and lab week 3"
+output: html_document
+date: "2023-02-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# LECTURE
+
+prob1
+```{r}
+w <- seq(0,1,length = 1000)
+
+#A <- seq(0,0.3, length = 1000)
+
+RV_x <- tibble("universe" = w, "X" = sin(10*w))
+RV_y <- tibble("universe" = w, "Y" = sin(10*(1-w)))
+
+prob_x <- RV_x %>% 
+  mutate(inside = X <= 0.3 | X >= 0.6) %>% 
+  count(inside) %>% 
+  mutate(probability = n/sum(n))
+
+prob_y <- RV_y %>% 
+  mutate(inside = Y <= 0.3 | Y >= 0.6) %>% 
+  count(inside) %>% 
+  mutate(probability = n/sum(n))
+
+# They output the same probabilites!
+```
+
