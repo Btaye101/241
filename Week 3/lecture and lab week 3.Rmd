@@ -12,6 +12,7 @@ library(tidyverse)
 # LECTURE
 
 prob1
+
 ```{r}
 w <- seq(0,1,length = 1000)
 
@@ -31,5 +32,77 @@ prob_y <- RV_y %>%
   mutate(probability = n/sum(n))
 
 # They output the same probabilites!
+
+hist_x <- RV_x %>% 
+  ggplot(aes(x=X)) +
+  geom_histogram()
+
+hist_y <- RV_y %>% 
+  ggplot(aes(x=Y)) +
+  geom_histogram()
+
+hist_y
+
 ```
 
+cumulative distrib function
+
+```{r}
+cumul <- function(sample, a) {
+ prob <-  sample %>% 
+    mutate(inside = X < a) %>% 
+    count(inside) %>% 
+   mutate(probs = n/sum(n))
+ 
+ return(pull(prob[2,3]))
+}
+
+lol <- cumul(RV_x, 0.5)
+RV_x_cumul <- RV_x %>% 
+  arrange(X) %>% 
+  mutate(Fx = row_number()/n()) %>% 
+  ggplot() +
+  geom_line(aes(x = X, y = Fx))
+
+RV_x_cumul
+
+
+```
+
+## R FUNCTIONS FOR DISTRIBTUINOS
+
+### NORMAL
+
+```{r, eval = F}
+pnorm(x, mean, sd) #CDF
+dnorm()       # PDF
+qnorm() #Qf
+rnorm() #sampling draw x amount of samples from distribution
+```
+
+###Uniform
+
+```{r}
+punif(x, min, max) #CDF
+dunif()
+qunif()
+```
+
+### BERNOULI
+
+```{r}
+pbinom(x, 1, prob)
+```
+
+```{r}
+exp <- tibble(X= seq(-10,10, length=1000),
+              Fx = dexp(X, rate = 1)) %>% 
+  ggplot() +
+  geom_line(aes(x = X, y = Fx))
+exp
+
+exp_h <- tibble(Fx = rexp(10000, rate = 1)) %>% 
+  ggplot() +
+  geom_histogram(aes(x = Fx))
+exp_h
+```
