@@ -82,7 +82,7 @@ rnorm() #sampling draw x amount of samples from distribution
 
 ###Uniform
 
-```{r}
+```{r, eval = F}
 punif(x, min, max) #CDF
 dunif()
 qunif()
@@ -90,7 +90,7 @@ qunif()
 
 ### BERNOULI
 
-```{r}
+```{r, eval = F}
 pbinom(x, 1, prob)
 ```
 
@@ -106,3 +106,115 @@ exp_h <- tibble(Fx = rexp(10000, rate = 1)) %>%
   geom_histogram(aes(x = Fx))
 exp_h
 ```
+# LAB
+
+## 1
+
+### 1.1
+
+A random variable takes a universe and outputs a characteristic measurement of said universe. domain Universe. Range Number.
+
+### 1.2
+
+An event is a subset of all the possible universes
+
+### 1.3
+
+Fx -> subtract Fx(a) from Fx(b). 
+fx -> calculate area under curve over interval (a,b]
+
+### 1.4
+
+Standard Normal Distribution
+
+
+## 2
+
+### 2.1
+
+```{r}
+pnorm(3) + pnorm(3,lower.tail=F)
+```
+
+### 2.2
+```{r}
+ye <- tibble(x = seq(-10,20, length = 100),
+             inside = as.numeric(x>= 0 & x<= 10)) %>% 
+  ggplot() +
+  geom_line(aes(x = x, y = inside))
+ye
+
+```
+Because its area is greater than one (PDF)
+
+## 3
+still pnorm?
+```{r}
+yap <- tibble(X = rnorm(10000),
+              Y = X^2,
+              inside = Y < 0.5) %>% 
+  count(inside) %>% 
+  mutate(prob = n/sum(n)) 
+Y_prob <-  pull(yap[2,3])
+
+X_prob <- pnorm(0.5)
+
+df <- tibble(X = rnorm(10000),
+              Y = X^2,
+              inside = Y < 0.5)
+
+CDF_Y <- df %>% 
+  arrange(Y) %>% 
+  mutate(prob = row_number()/nrow(df))
+
+CDF_X <- df %>% 
+  arrange(X) %>% 
+  mutate(prob = row_number()/nrow(df))
+
+Y_line <- CDF_Y %>% ggplot() +
+  geom_line(aes(x = Y, y = prob))
+
+X_line <- CDF_X %>% ggplot() +
+  geom_line(aes(x = X, y = prob))
+
+X_line
+
+Y_line
+  
+```
+## 4
+
+```{r}
+anotha <- tibble(w= (1:10),
+                 X = w/2 + 1) %>% 
+  arrange(X) 
+
+anotha <- anotha %>%
+  mutate(prob = row_number()/nrow(anotha))
+
+CDF_anotha <- anotha %>% 
+  ggplot() +
+  geom_point(aes(x=X, y = prob))
+CDF_anotha
+
+## big boi
+anotha_b <- tibble(w= seq(0,10, length = 10000),
+                 X = w/2 + 1) %>% 
+  arrange(X) 
+
+anotha_b <- anotha_b %>%
+  mutate(prob = row_number()/nrow(anotha_b))
+
+CDF_anotha_b <- anotha_b %>% 
+  ggplot() +
+  geom_point(aes(x=X, y = prob))
+CDF_anotha_b
+
+prob_4 <- anotha_b %>% 
+  filter(X > 3.9 & X <= 4)
+```
+## 5
+```{r}
+
+```
+
