@@ -8,7 +8,7 @@ ya <- tibble(X = seq(-5,5, length = 1000)) %>% #prob 1.1
 
 ya
 
-ya_inv <- tibble(X = seq(-5,5, length = 1000)) %>% # prob 1.2
+ya_inv <- tibble(X = seq(-5,25, length = 1000)) %>% # prob 1.2
   mutate(Y = case_when(X < 0 ~ X,
                        X >= 0 ~ X^0.5)) %>% 
   ggplot() +
