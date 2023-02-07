@@ -9,6 +9,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
+# WORKED WITH JOAN SHIM AND LUCAS YOSHIDA
+
 ## P1
 
 ### 1
@@ -55,10 +57,10 @@ ya_inv
 ## P3
 
 ### 1
-$P(A \cap B) = P(A) + P(B) - P(A \cup B)$
+  - $P(A \cap B) = P(A) + P(B) - P(A \cup B)$
 
 ### 2
- - When A and B are disjoint events relative to each other. As such, both conditional probabilities would equal zero. 
+ - When A and B are disjoint events relative to each other. As such, both conditional probabilities would equal zero. Or when $P(A) = P(B)$ since $P(A|B) = \frac{P(A \cap B)}{P(B)}$ and $P(B|A) = \frac{P(A \cap B)}{P(A)}$ and with both denominators being equal we would have equivalent expressions for both.
  
 ### 3
 - $P(A) \le P(B)$
@@ -83,32 +85,70 @@ $P(A \cap B) = P(A) + P(B) - P(A \cup B)$
 
 ### 1
 ```{r}
-univ_prob1 <- tibble(w = seq(0,1, length = 1000), #6.1
-                     x = w^2) %>%
-  mutate(inside = (x >= 0.2 & x <= 0.3) | (x >= 0.9 & x <= 1)) %>% 
-  count(inside) %>% 
-  mutate(prob = n/sum(n))
 
-answer_p6.1 <- pull(univ_prob1[2,3])
-answer_p6.1
+# table
+univ_probX <- tibble(w = seq(0,1, length = 1000), #6.1
+                     x = w^2) %>%
+  mutate(inside_1 = (x >= 0.2 & x <= 0.3),
+         inside_2 = (x >= 0.9 & x <= 1)) 
+# First X condition
+answer_p6.X1 <- univ_probX %>% 
+  count(inside_1) %>% 
+  mutate(prob = n/sum(n)) 
+
+
+answer_p6.X1 <- pull(answer_p6.X1[2,3])
+
+answer_p6.X1
+
+# Second X condition
+answer_p6.X2 <- univ_probX %>% 
+  count(inside_2) %>% 
+  mutate(prob = n/sum(n)) 
+
+
+answer_p6.X2 <- pull(answer_p6.X2[2,3])
+
+answer_p6.X2
+
+
+
+
 ```
 
 ### 2
 ```{r}
-univ_prob2 <- tibble(w = seq(0,1, length = 1000), #6.2
+# table
+univ_probY <- tibble(w = seq(0,1, length = 1000), #6.1
                      y = (1-w)^2) %>%
-  mutate(inside = (y >= 0.2 & y <= 0.3) | (y >= 0.9 & y <= 1)) %>% 
-  count(inside) %>% 
-  mutate(prob = n/sum(n))
-answer_p6.2 <- pull(univ_prob2[2,3])
-answer_p6.2
+  mutate(inside_1 = (y >= 0.2 & y <= 0.3),
+         inside_2 = (y >= 0.9 & y <= 1)) 
+# First Y condition
+answer_p6.Y1 <- univ_probY %>% 
+  count(inside_1) %>% 
+  mutate(prob = n/sum(n)) 
+
+
+answer_p6.Y1 <- pull(answer_p6.Y1[2,3])
+
+answer_p6.Y1
+
+# Second Y condition
+answer_p6.Y2 <- univ_probY %>% 
+  count(inside_2) %>% 
+  mutate(prob = n/sum(n)) 
+
+
+answer_p6.Y2 <- pull(answer_p6.Y2[2,3])
+
+answer_p6.Y2
 ```
 
 ### 3
 ```{r}
 #6.3
 funk <- function(w) {
-  w^2 + 1
+  w^2
 }
 
 probability <- function(a,b,X) {
@@ -121,5 +161,6 @@ probability <- function(a,b,X) {
     #return(prob)
 }
 
+probability(.9,1,funk)
 ```
 
