@@ -10,4 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # LAB
 
+joint pdf -> integrate with respect to one var = marginal prob of that one var (reg 1D PDF) -> integrate again -> get probability (total is one)
+
+spec joint probs with definite double integrals to return probability:
+
+$P(0<X<3, 3<Y<4) =\int_{3}^{0} f_{x,y}(x,y) \,dx$ *double integral*
+
 

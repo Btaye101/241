@@ -73,12 +73,12 @@ CY_PDF
 # 3.1
 
 rlaplace <-  function(n, location = 0, scale = 1) {
-  (1/(2*scale))^(-(abs(n-location)/scale))
+  (1/(2*scale))* exp((-(abs(n-location)/scale)))
 }
 
-rlaplace(1)
+rlaplace(-1)
 
-test <- tibble(w = seq(-10,10,length = 100),
+test <- tibble(w = seq(0,1,length = 1000),
                X = rlaplace(w)) %>% 
   ggplot()+
   geom_histogram(aes(x=X))
