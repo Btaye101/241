@@ -72,17 +72,32 @@ CY_PDF
 
 # 3.1
 
-rlaplace <-  function(n, location = 0, scale = 1) {
-  (1/(2*scale))* exp((-(abs(n-location)/scale)))
+#rlaplace <-  function(n, location = 0, scale = 1) {
+ # (1/(2*scale))* exp((-(abs(n-location)/scale)))
+#}
+
+# a is mu location b is scale
+
+qlap <- function(p, a = 0, b = 1) {
+  return(case_when(0 <= p & p < 0.5 ~ a+b*log(2*p),
+            p >= 0.5 & p <= 1 ~ a-b*log(2*(1-p)),
+        )
+  )
+}
+rlaplace <- function(n,location = 0,scale = 1) {
+  tibble(p = runif(n),
+         X = qlap(p,location,scale)) %>% 
+    pull(X)
+  
 }
 
-rlaplace(-1)
-
-test <- tibble(w = seq(0,1,length = 1000),
-               X = rlaplace(w)) %>% 
-  ggplot()+
-  geom_histogram(aes(x=X))
-
-test  
-
+big <- ggplot() +
+  geom_histogram(aes(x = rlaplace(1000)))
+big
+try <- tibble(p = seq(0,1,length = 1000),
+              X = qlap(p)) %>% 
+  ggplot() +
+  geom_line(aes(x = X, y = p))
+try
+  
 
