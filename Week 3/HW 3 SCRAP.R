@@ -91,13 +91,13 @@ rlaplace <- function(n,location = 0,scale = 1) {
   
 }
 
-big <- ggplot() +
+lap_PDF <- ggplot() +
   geom_histogram(aes(x = rlaplace(1000)))
-big
-try <- tibble(p = seq(0,1,length = 1000),
+lap_PDF
+lap_CDF <- tibble(p = seq(0,1,length = 1000),
               X = qlap(p)) %>% 
   ggplot() +
   geom_line(aes(x = X, y = p))
-try
+lap_CDF
   
 
