@@ -43,6 +43,8 @@ Y_PDF <- values %>%
 Y_PDF
 
 # 2.2 and 2.3
+
+#TABLE
 custom <- tibble(w = seq(0,1,length = 1000),
                  X = 2^w,
                  Y = 2^(1-w))
@@ -99,5 +101,32 @@ lap_CDF <- tibble(p = seq(0,1,length = 1000),
   ggplot() +
   geom_line(aes(x = X, y = p))
 lap_CDF
-  
+
+#1
+
+# Distributions allow us to better visualize the probability of certain events that random variables assign. CDFs, PDFs, and quantile functions all allow us to directly quantify probabilities of events without us having to get the pre-image of the RV's output to derive the same information.
+
+
+
+
+#5.1
+
+# Height in a given population is probably normally distributed as individual height will symmetrically cluster around the population mean and symmetrically taper off in frequency on both sides as the height measures get more extreme.
+
+#5.2
+
+# A fair coin toss has a Bernoulli distribution as it is a discrete distribution with two possible outcomes: heads or tails, with a probability of 0.5 for either outcome. 
+
+#5.3
+
+# The number of work place accidents at a construction site in a year probably has a poisson distribution. The number of Workplace accidents is a countable event within a given time interval, is relatively rare, and the probability of the occurrence of one accident is independent of the probability of the occurrence of another. 
+
+#5.4
+
+# The probability of rolling a particular value on a six sided die is uniformly distributed as each value as an equal probability of occurrence (1/6).
+
+#5.5
+
+# The amount of time it takes to receive an order of chicken nuggets from a particular McDonalds location is probably exponentially distributed as the wait times will cluster around relatively small values (it's just chicken nuggets) and dramatically fall off from there in an exponential fashion.
+
 
