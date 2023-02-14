@@ -4,10 +4,7 @@ output: pdf_document
 date: "2023-02-13"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-```
+
 
 ## P1
 
@@ -19,8 +16,8 @@ library(tidyverse)
 
 ### 1
 
-```{r}
 
+```r
   # TALBE
     values <- tibble(w = seq(0,1,length = 1000),
                      X = w^2,
@@ -40,20 +37,31 @@ library(tidyverse)
   # X CDF
     X_CDF <- CDF(values,X)
     X_CDF
-  
+```
+
+![](HW-3_files/figure-latex/unnamed-chunk-1-1.pdf)<!-- --> 
+
+```r
   # X PDF
     X_PDF <- values %>% 
       ggplot()+
       geom_histogram(aes(x = X), binwidth = .01)
     
     X_PDF
-    
+```
 
+![](HW-3_files/figure-latex/unnamed-chunk-1-2.pdf)<!-- --> 
+
+```r
   # Y CDF
 Y_CDF <- CDF(df=values,rv = Y)
 
 Y_CDF
+```
 
+![](HW-3_files/figure-latex/unnamed-chunk-1-3.pdf)<!-- --> 
+
+```r
   # Y PDF
 
 Y_PDF <- values %>% 
@@ -61,12 +69,14 @@ Y_PDF <- values %>%
   geom_histogram(aes(x = Y), binwidth = .01)
 
 Y_PDF
-
 ```
+
+![](HW-3_files/figure-latex/unnamed-chunk-1-4.pdf)<!-- --> 
 
 ### 2 & 3
 
-```{r}
+
+```r
 #TABLE
 custom <- tibble(w = seq(0,1,length = 1000),
                  X = 2^w,
@@ -75,6 +85,11 @@ custom <- tibble(w = seq(0,1,length = 1000),
 CX_CDF <- CDF(custom,X)
 
 CX_CDF
+```
+
+![](HW-3_files/figure-latex/unnamed-chunk-2-1.pdf)<!-- --> 
+
+```r
 # CUSTOM X PDF
 
 CX_PDF <- custom %>% 
@@ -82,12 +97,24 @@ CX_PDF <- custom %>%
   geom_histogram(aes(x = X))
 
 CX_PDF
+```
 
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](HW-3_files/figure-latex/unnamed-chunk-2-2.pdf)<!-- --> 
+
+```r
 # CUSTOM Y CDF
 CY_CDF <- CDF(custom,Y)
 
 CY_CDF
+```
 
+![](HW-3_files/figure-latex/unnamed-chunk-2-3.pdf)<!-- --> 
+
+```r
 # CUSTOM Y PDF
 CY_PDF <- custom %>% 
   ggplot()+
@@ -96,11 +123,18 @@ CY_PDF <- custom %>%
 CY_PDF
 ```
 
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](HW-3_files/figure-latex/unnamed-chunk-2-4.pdf)<!-- --> 
+
 ## P3
 
 ### 1
 
-```{r}
+
+```r
 # quantile function
 qlap <- function(p, a = 0, b = 1) {
   return(case_when(0 <= p & p < 0.5 ~ a+b*log(2*p),
@@ -118,16 +152,28 @@ rlaplace <- function(n,location = 0,scale = 1) {
 
 ### 2
 
-```{r}
+
+```r
 lap_PDF <- ggplot() +
   geom_histogram(aes(x = rlaplace(10000)))
 lap_PDF
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](HW-3_files/figure-latex/unnamed-chunk-4-1.pdf)<!-- --> 
+
+```r
 lap_CDF <- tibble(p = seq(0,1,length = 1000),
               X = qlap(p)) %>% 
   ggplot() +
   geom_line(aes(x = X, y = p))
 lap_CDF
 ```
+
+![](HW-3_files/figure-latex/unnamed-chunk-4-2.pdf)<!-- --> 
 
 ## P4
 
