@@ -151,7 +151,7 @@ lap_CDF
 
 ### 3
 
--   The number of work place accidents at a construction site in a year probably has a poisson distribution. The number of workplace accidents is a countable event within a given time interval, is relatively rare, and the probability of the occurrence of one accident is independent of the probability of the occurrence of another.
+-   The number of work place accidents at an office building in a year probably has a poisson distribution. The number of workplace accidents is a countable event within a given time interval, is relatively rare, and the probability of the occurrence of one accident is independent of the probability of the occurrence of another.
 
 ### 4
 
