@@ -16,7 +16,7 @@ independence the prob of an event of a var doesn't affect the prob of an event i
 ```{r}
 datagen <- function(n) {
   tibble(X = rnorm(n),
-         Y = rnorm(n,sd = 1/ (.1 + abs(X)))
+         Y = rnorm(n,sd = .1 + abs(X))
          )
 }
 
