@@ -1,0 +1,55 @@
+---
+title: "LAB week 5"
+output: html_document
+date: "2023-02-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+$P(X|Y,Z) = P(X|Z)$
+
+independence the prob of an event of a var doesn't affect the prob of an event in another vars.Two vars are conditionally indpededent if their probs are indepedent given information of a third variable. Independence between two variables means they can't be conditionally independent since it would mean they share a source of randomenss 
+
+```{r}
+datagen <- function(n) {
+  tibble(X = rnorm(n),
+         Y = rnorm(n,sd = 1/ (.1 + abs(X)))
+         )
+}
+
+datagen(10000) %>%
+  ggplot() +
+  geom_histogram(aes(x=Y)) # it looks like laplace dawg
+
+
+datagen(10000) %>%
+  filter(X>= -0.1 & X <= 0.1) %>% # Distribution of Y given -.1 <= X <= .1. Looks normalish
+  ggplot() +
+  geom_histogram(aes(x=Y))
+
+datagen(10000) %>%
+  filter(X>= 1.9 & X <= 2.1) %>% # Distribution of Y given -.1 <= X <= .1
+  ggplot() +
+  geom_histogram(aes(x=Y))
+
+
+datagen(10000) %>%  # when x deviates from 0 Y fans out/ varies more
+  ggplot() +
+  geom_point(aes(x=X, y = Y))
+```
+
+```{r}
+sample_XYZ = function(n) { # input = # of rows desired 
+  tibble( 
+    X = rbinom(n,1,.5),
+    Y = ifelse(X,runif(n),rnorm(n)),
+    Z = rbinom(n,1,log(Y))
+  ) 
+}
+
+sample_XYZ(1000)
+```
+

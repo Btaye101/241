@@ -6,6 +6,7 @@ date: "2023-02-08"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 # LAB
@@ -16,4 +17,18 @@ spec joint probs with definite double integrals to return probability:
 
 $P(0<X<3, 3<Y<4) =\int_{3}^{0} f_{x,y}(x,y) \,dx$ *double integral*
 
+$f_{x|y} = f_{x,y}(x,y)/f_y(y)$
 
+```{r}
+data <- expand_grid(w1 = seq(0,1,length = 1000),
+                    w2 = seq(0,1,length = 1000)) %>% 
+  mutate(
+    X = sin(2*pi*w)
+  )
+
+
+              
+```
+
+
+transforming RVs change their distribution (e.g. multiplying)
