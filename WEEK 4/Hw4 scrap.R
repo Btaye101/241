@@ -1,7 +1,59 @@
-#4.1
+
+#1.1
 library(tidyverse)
 library(rmutil)
 library(pracma)
+
+# Method A
+A <- tibble(
+w = runif(1000),
+X = qnorm(w),
+Y = qnorm(w),
+) #%>% ggplot() +
+  geom_line(aes(x = w, y = X)) +
+  geom_line(aes(x = w, y = Y), color = "blue")
+
+A
+
+
+#method b
+B <- tibble(
+w1 = runif(1000),
+w2 = runif(1000),
+X = qnorm(w1),
+Y = qnorm(w2),
+) %>% ggplot() +
+  geom_line(aes(x = w1, y = X)) +
+  geom_line(aes(x = w2, y = Y), color = "blue")
+
+B_cdfx <- CDF(B,X)
+
+B_cdfy <- CDF(B,Y)
+
+B_cdfx
+B_cdfy
+
+
+# method c
+C <- tibble(
+X = rnorm(1000),
+Y = rnorm(1000),
+) 
+
+#%>% ggplot() +
+  #geom_line(aes(x = w1, y = X)) +
+  #geom_line(aes(x = w2, y = Y), color = "blue")
+
+
+c_cdfx <- CDF(C,X)
+c_cdfx
+
+c_cdfy <- CDF(C,Y)
+c_cdfy
+
+C
+#4.1
+
 X = function() {
   c(X = rnorm(1))
 }
@@ -42,6 +94,8 @@ prob_xgy1 <- Y_and_X %>%
   filter(Y > 1) %>%
   count(X<0) %>% 
  mutate(p = n/sum(n))
+
+pull(prob_xgy1[2,3])
 
 #5.1
 f_X = function(x) {dnorm(x)
