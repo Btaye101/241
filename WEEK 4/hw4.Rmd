@@ -14,76 +14,88 @@ library(pracma)
 ## P1
 
 ### 1
-  - They are identical 
-  
+
+-   They are identical, identically distributed, not independent.
+
 ### 2
-  - B: They are identically distributed and independent.
-  C: They are identically distributed not enough evidence to say if they are independent or not
-  
+
+-   B: They are identically distributed and independent. C: They are identically distributed and independent.
+
 ### 3
-  - 
-  
+
+-   A and B
+
 ### 4
-  - 
-  
-  
+
+-   all three have the same marginal distribution for X
+
 ## P2
 
 ### 1
-  - Random Variable: Let $F_C$ be a random variable that takes an individual and assess whether they are infected with covid or not.
-  - Domain: $f^{-1}_C = \{individual\}$
-  - Range: $F_C(individual) = \{I = infected, H = Healthy\}$
-  - Random Variable: Let $F_t$ be a random variable that takes an individual and assess whether they have tested positive or negative.
-  - Domain: $f^{-1}_t = \{individual\}$
-  - Range: $F_t(individual) = \{+ = positive, - = negative \}$
-  
-- $P(t =+) = 0.02 \text{, } P(C = I\cap t = +) = 0.01$
-  
-- $P(t =+)$ is a marginal probability and $P(C = I\cap t = +) = 0.01$ is a joint probability
+
+-   Random Variable: Let $C$ be a random variable that takes an individual and assess whether they are infected with covid or not.
+
+-   Domain: $f^{-1}_C = \{individual\}$
+
+-   Range: $F_C(individual) = \{I = infected, H = Healthy\}$
+
+-   Random Variable: Let $t$ be a random variable that takes an individual and assess whether they have tested positive or negative.
+
+-   Domain: $f^{-1}_t = \{individual\}$
+
+-   Range: $F_t(individual) = \{+ = positive, - = negative \}$
+
+-   $P(t =+) = 0.02 \text{, } P(C = I\cap t = +) = 0.01$
+
+-   $P(t =+)$ is a marginal probability and $P(C = I\cap t = +) = 0.01$ is a joint probability
 
 ```{r}
 pp <- 0.02
 ppi <- 0.01
 ```
 
-
 ### 2
 
-- $P(C = I | t = +) = \frac{P(C = I, t =+)}{P(t = +)}$
+-   $P(C = I | t = +) = \frac{P(C = I, t =+)}{P(t = +)}$
 
 ```{r}
 pigp <- ppi/pp
 pigp
 ```
+
 ### 3
 
-  - $P(t = +|C=I) = 0.9$
-  - $P(C = I) = 0.009$
+-   $P(t = +|C=I) = 0.9$
+-   $P(C = I) = 0.009$
+
 ```{r}
 ppgi <- 0.9
 pi <- 0.009
 ```
 
-  
 ### 4
+
 $P(I|+) = \frac{P(I) * P(+|I)}{P(+)}$
+
 ```{r}
 pigp <- (pi*ppgi)/pp
 pigp
 ```
 
-
 ## P3
 
 ### 1
-  - They are identically distributed
-  
+
+-   They are identically distributed. Not independent.
+
 ### 2
-  - They are identical
-  
+
+-   They are identical, identically distributed, and not independent.
+
 ## P4
 
 ### 1
+
 ```{r}
 X = function() {
   c(X = rnorm(1))
@@ -123,10 +135,13 @@ pull(prob_yandx[2,3])
 ```
 
 ### 2
-  - It's not possible to compute with the given functions alone without manipulation since Y is continuous and we can't get it to exactly equal 1 when we sample from the joint and thus the probability using this sampling code is zero.
+
+-   It's not possible to compute with the given functions alone without manipulation since Y is continuous and we can't get it to exactly equal 1 when we sample from the joint and thus the probability using this sampling code is zero.
 
 ### 3
-  - Sample from the joint function and filter for when Y > 1 to get the probability when X < 0.
+
+-   Sample from the joint function and filter for when Y > 1 to get the probability when X < 0.
+
 ```{r}
 prob_xgy1 <- Y_and_X %>% 
   sample(10000) %>% 
@@ -137,10 +152,10 @@ prob_xgy1 <- Y_and_X %>%
 pull(prob_xgy1[2,3])
 ```
 
-
 ## P5
 
 ### 1
+
 ```{r}
 f_X = function(x) {dnorm(x)
 }
@@ -158,14 +173,15 @@ f_Y_and_X <- function(y,x){
 ```
 
 ### 2
+
 ```{r}
 f_Y_given_X_is_0 <- function(y){
   dexp(y, rate=abs(0))
 }
-f_Y_given_X_is_0(.2)
 ```
 
 ### 3
+
 ```{r}
 p1 <- integrate(f_X,-1,0)
 
@@ -175,6 +191,5 @@ p3 <- int2(f_Y_and_X, a = c(0,0), b = c(1,1))
 
 p1[["value"]]
 p2[["value"]]
-p3[1]
+p3
 ```
-
