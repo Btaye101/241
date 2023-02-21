@@ -56,7 +56,7 @@ ppi <- 0.01
 
 ### 2
 
--   $P(C = I | t = +) = \frac{P(C = I, t =+)}{P(t = +)}$
+-   $P(C = I | t = +) = \frac{P(C = I, t =+)}{P(t = +)}$ (Ven diagram in Figures section at end of pdf)
 
 ```{r}
 pigp <- ppi/pp
@@ -193,3 +193,6 @@ p1[["value"]]
 p2[["value"]]
 p3
 ```
+# FIGURES
+
+## P2.2
