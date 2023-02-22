@@ -67,4 +67,10 @@ Density(yeet, X)
 Density(yeet, Y)
 Density(yeet, Z)
 ```
+```{r}
+con <- dgp(10000) %>% 
+  filter(Z==0) %>% 
+  summarize(mean(X))
+
+```
 
