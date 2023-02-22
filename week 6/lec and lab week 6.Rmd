@@ -1,0 +1,70 @@
+---
+title: "lec and lab week 6"
+output: pdf_document
+date: "2023-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(magrittr)
+```
+
+## LECTure
+
+```{r}
+yap <- tibble(
+  w = 1:1000,
+  X = case_when(
+    w %% 2 == 0 ~ 0,
+    w %% 3 == 0 ~ 1,
+    TRUE        ~ 2
+  )
+)
+E <- yap %>% 
+  summarize(mean = mean(X))
+
+yap_pdf <- yap %>% 
+  count(X) %>% 
+  mutate(p = n/nrow(yap),
+         fxx = p * X ) %>% 
+  summarize(E = sum(fxx))
+
+yap %$% {
+  mean(X)
+}
+
+integrand <- function(x) {
+  x*dexp(x,2)
+}
+
+integrate(integrand,0,999)
+
+```
+
+
+```{r}
+dgp <- function(n){
+tibble(
+  X = rnorm(n,-0.5,1),
+  Y = runif(n),
+  Z = X+Y
+)
+}
+
+yeet <- dgp(10000)
+d_e <- dgp(100000) %>% 
+  summarize(EX = mean(X),
+            EY = mean(Y),
+            EZ = mean(Z)) #they are additive inverses
+Density <- function(df, ...){
+  df %>% 
+    ggplot() +
+    geom_density(aes(x=...))
+}
+
+Density(yeet, X)
+Density(yeet, Y)
+Density(yeet, Z)
+```
+
