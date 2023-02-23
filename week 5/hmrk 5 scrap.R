@@ -3,15 +3,15 @@ library(GGally)
 #2
 cancer_DGP <- function(n) {
   tibble(
-    age = runif(n,0,100),
-    smoke = as.numeric(rbernoulli(n, p = case_when(
+    age = rlnorm(n, 3.584, 0.434),
+    smoke = rbernoulli(n, p = case_when(
                               age %in% 25:64  ~ .145,
-                              age %in% 0:10 ~ .00001,
+                              age %in% 0:10 ~ .00000000001,
                               TRUE ~ .08)
-                       )),
+                       ),
     gene = runif(n,0,100),
-    lung = as.numeric(rbernoulli(n, p = (gene+age+smoke*100)/300)),
-    skin = as.numeric(rbernoulli(n, p = (gene+age)/200))
+    lung = rbernoulli(n, p = (gene+age+smoke*100)/1500),
+    skin = rbernoulli(n, p = (gene+age)/200)
   )
 }
 
@@ -21,9 +21,14 @@ test <- cancer_DGP(10000) %>%
 test
 
 test_prob <- cancer_DGP(10000) %>% 
-  filter(smoke == TRUE) %>% 
-  count(lung) %>% 
+  filter(lung == TRUE) %>% 
+  count(as.integer(age))
+ 
+
+test_prob <- cancer_DGP(10000) %>% 
+  count(age) %>% 
   mutate(p = n/sum(n))
+
 
 #3
 
@@ -69,5 +74,6 @@ DGP_D <- function(n) {
   )
   
 }
-tibble(x = rlnorm(100000, meanlog = 3.22)) %>% ggplot() + geom_density(aes(x=x))
+tibble(x = rlnorm(10000, 3.584, 0.434)) %>% ggplot() + geom_density(aes(x=x))
+
 
