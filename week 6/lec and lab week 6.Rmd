@@ -90,6 +90,23 @@ yup1 <- DGP1(10000) %>%
 
 # LAB
 
+Expectation as weighted average with pdf densities (relative frequency that the value x occurs) as weights to value x.
+
+weighted ave = weight(1) * 1 + weight(2) * 2 .... weight(n) * n
+
+discrete var expected value: pdf(x1) * x1 + pdf(x2) + x2 ... pdf(xn) + xn
+
+continuous var expected value: integral(x*pdf(x))
+  - when integrating a symmetric distribution expectation is the symmetry axis since areas will cancel out for every value x barring the symmetry axis. 
+  
+expectation of a function 
+
+densities map over from any transformation x when passing through a function so E[g(x)] = g(x) * pdf(x). Can get expectation with pdf of X for any transformation function of X, g(X).
+
+independence rules also apply to expectation:
+
+E[X*Y] = E[X] * E[Y] if X and Y are independent 
+
 
 
 

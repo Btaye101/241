@@ -39,16 +39,35 @@ DGP_A <- function(n){
   tibble(
   X = runif(n),
   W = rbernoulli(n),
-  YgX,W = rnorm(n,X+W,1+X*W) 
+  Y = rnorm(n,X+W,1+X*W) 
 )
 }
 
  
 DGP_B <- function(n){
-  tibble(X = runif(n),
-    WgX = rbernoulli(n,p= logistic(X)),
-    YgX,W = rnorm(n,X+W,1+X*W) 
+  tibble(
+    X = runif(n),
+    W = rbernoulli(n,p= logistic(X)),
+    Y = rnorm(n,X+W,1+X*W) 
   )
 } 
 
+DGP_C <- function(n){
+  tibble(L = runif(n,-1,0),
+         U = runif(n),
+         M = runif(n,L,U),
+         X = rnorm(n, L),
+         Y = rnorm(n, U)
+  )
+} 
+
+DGP_D <- function(n) {
+  tibble(
+    X = runif(n),
+    W = rbernoulli(n, logistic(X)),
+    Y = rnorm(n, W, 1+W)
+  )
+  
+}
+tibble(x = rlnorm(100000, meanlog = )) %>% ggplot() + geom_density(aes(x=x))
 
