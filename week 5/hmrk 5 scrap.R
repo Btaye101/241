@@ -39,15 +39,16 @@ DGP_A <- function(n){
   tibble(
   X = runif(n),
   W = rbernoulli(n),
-  Y|X,W = rnorm(n,X+W,1+X*W) 
+  YgX,W = rnorm(n,X+W,1+X*W) 
 )
 }
 
  
 DGP_B <- function(n){
-  tibble(
-    X = runif(n),
-    W|X = rbernoulli(n,p= logistic(X)),
-    Y|X,W = rnorm(n,X+W,1+X*W) 
+  tibble(X = runif(n),
+    WgX = rbernoulli(n,p= logistic(X)),
+    YgX,W = rnorm(n,X+W,1+X*W) 
   )
 } 
+
+

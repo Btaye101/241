@@ -88,3 +88,11 @@ yup1 <- DGP1(10000) %>%
   summarize(mean = mean(Y))
 ```
 
+# LAB
+
+
+
+
+
+
+
