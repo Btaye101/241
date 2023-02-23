@@ -69,5 +69,5 @@ DGP_D <- function(n) {
   )
   
 }
-tibble(x = rlnorm(100000, meanlog = )) %>% ggplot() + geom_density(aes(x=x))
+tibble(x = rlnorm(100000, meanlog = 3.22)) %>% ggplot() + geom_density(aes(x=x))
 
