@@ -10,8 +10,8 @@ cancer_DGP <- function(n) {
                               TRUE ~ .08)
                        ),
     gene = runif(n,0,100),
-    lung = rbernoulli(n, p = (gene+age+smoke*100)/1500),
-    skin = rbernoulli(n, p = (gene+age)/200)
+    lung = rbernoulli(n, p = (logistic(gene,.5,50)+logistic(age,.1,60)+smoke)/9),
+    skin = rbernoulli(n, p = (logistic(gene, .5,50)+logistic(age,.1,35))/7)
   )
 }
 
@@ -20,25 +20,27 @@ test <- cancer_DGP(10000) %>%
 
 test
 
-test_prob <- cancer_DGP(10000) %>% 
-  filter(lung == TRUE) %>% 
-  count(as.integer(age))
+test_prob <- cancer_DGP(10000) %>%
+  filter(age > 60, gene > 50) %>% 
+  count(skin == TRUE) %>% 
+  mutate(p = n/sum(n))
  
 
-test_prob <- cancer_DGP(10000) %>% 
-  count(age) %>% 
+test_prob <- cancer_DGP(10000) %>%
+  filter(age > 60, smoke == TRUE, gene > 50) %>% 
+  count(lung) %>% 
   mutate(p = n/sum(n))
 
 
 #3
 
-logistic <- function(x){
+logistic <- function(x, l=1,e=0){
   
-  1/(1+exp(-x))
+  1/(1+exp(-l*(x-e)))
   
 }
 
-logistic(2)
+logistic(60,l = .005 ,e = 50)
 
 DGP_A <- function(n){
   tibble(
@@ -74,6 +76,7 @@ DGP_D <- function(n) {
   )
   
 }
-tibble(x = rlnorm(10000, 3.584, 0.434)) %>% ggplot() + geom_density(aes(x=x))
+tibble(x = seq(0,100,length = 100),
+       y = logistic(x,l = .1, e = 30)) %>% ggplot() + geom_line(aes(x=x, y= y))
 
 
