@@ -1,5 +1,6 @@
 library(tidyverse)
 library(GGally)
+library(mvtnorm)
 #2####################################
 logistic <- function(x, l=1,e=0){
   
@@ -204,4 +205,83 @@ pull(prob_dygxw[2,3])
 tibble(x = seq(0,100,length = 100),
        y = logistic(x,l = .1, e = 30)) %>% ggplot() + geom_line(aes(x=x, y= y))
 
+#####################4#################
+sample_na = function(n) {
+  sigma = matrix(c(
+    2, 1,
+    1, 1
+  ), nrow=2)
+  rmvnorm(
+    n,
+    mean=c(0,0),
+    sigma=sigma
+  ) %>%
+    as_tibble() %>%
+    set_names(c("X","Y"))
+}
+sample_nb = function(n) {
+  tibble(
+    Y = rnorm(n, mean=0, sd=1),
+    X = rnorm(n, mean=Y, sd=1)
+  )
+}
+sample_nc = function(n) {
+  tibble(X = rnorm(n, mean=0, sd=sqrt(2)),
+         Y = rnorm(n, mean=X/2, sd=1/sqrt(2))
+  )
+}
+pa0 <- prob(sample_na(10000), X > 0 & Y > 0)
+pb0 <- prob(sample_nb(10000), X > 0 & Y > 0)
+pc0 <- prob(sample_nc(10000), X > 0 & Y > 0)
 
+pa0l <- prob(sample_na(10000), X < 0 & Y < 0)
+pb0l <- prob(sample_nb(10000), X < 0 & Y < 0)
+pc0l <- prob(sample_nc(10000), X < 0 & Y < 0)
+
+pa1 <- prob(sample_na(10000), X < 1 & Y < 1)
+pb1 <- prob(sample_nb(10000), X < 1 & Y < 1)
+pc1 <- prob(sample_nc(10000), X < 1 & Y < 1)
+
+pad <- prob(sample_na(10000), X < 1 & Y < 0)
+pbd <- prob(sample_nb(10000), X < 1 & Y < 0)
+pcd <- prob(sample_nc(10000), X < 1 & Y < 0)
+
+dena <- sample_na(10000) %>% 
+  ggplot(aes(x=X, y=Y)) +
+  geom_density2d_filled()
+
+dena
+
+denb <- sample_nb(10000) %>% 
+  ggplot(aes(x=X, y=Y)) +
+  geom_density2d_filled()
+
+dena
+
+denc <- sample_nc(10000) %>% 
+  ggplot(aes(x=X, y=Y)) +
+  geom_density2d_filled()
+
+denc
+
+# Given that all three have the same joint density distribution when plotted and we can calculate the same probabilities of an event across all three of these sampling methods we can say that they each sample from the same joint distribution. 
+
+################################5###########################
+attempt <- function(n) {
+  tibble(
+    S = rbernoulli(n),
+    N = rnorm(n),
+    U = runif(n,0,1.15),
+    X = ifelse(S,N,U)
+  )
+}
+
+densityc <- attempt(1000000) %>% 
+  ggplot() +
+  geom_density(aes(x=X))
+densityc
+
+histogramc <- attempt(1000000) %>% 
+  ggplot() +
+  geom_histogram(aes(x=X), bins = 100)
+histogramc
