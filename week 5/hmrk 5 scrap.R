@@ -267,7 +267,7 @@ denc
 # Given that all three have the same joint density distribution when plotted and we can calculate the same probabilities of an event across all three of these sampling methods we can say that they each sample from the same joint distribution. 
 
 ################################5###########################
-attempt <- function(n) {
+distrib <- function(n) {
   tibble(
     S = rbernoulli(n),
     N = rnorm(n),
@@ -276,12 +276,12 @@ attempt <- function(n) {
   )
 }
 
-densityc <- attempt(1000000) %>% 
+densityc <- distrib(1000000) %>% 
   ggplot() +
   geom_density(aes(x=X))
 densityc
 
-histogramc <- attempt(1000000) %>% 
+histogramc <- distrib(1000000) %>% 
   ggplot() +
   geom_histogram(aes(x=X), bins = 100)
 histogramc
