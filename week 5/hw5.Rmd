@@ -14,6 +14,8 @@ library(GGally)
 library(mvtnorm)
 ```
 
+# Worked with Joan Shim and Lucas Yoshida
+
 ## P1
 
 -   1.1: This is not reasonable to assume since taller kids are probably in a higher grade level due to underlying age differences and thus have a higher reading level. So without age information these two variables would seem dependent.
@@ -81,7 +83,7 @@ plotsDGP
 
 -   One surprising thing is that the age distribution of smokers and non-smokers does not differ all that much. The same thing can be said with the age distribution between those with lung cancer and those without. I expected the distribution mass to shift right as I thought I had coded that smokers and people with Lung cancer should be of higher age. Upon closer inspection of the marginal distribution of age this could be due to there not being enough occurrences of older people.I could adjust the logistic normal distribution somehow to spread it out to increase the probability of older ages.
 
-##P3 
+## P3 
 
 ### Probability function
 ```{r}
@@ -238,22 +240,25 @@ pull(prob_dygw[2,3])
 
 # Probabilities are not equal thus Y and W are not independent.
 
-### Conditionally independent: none
-
-#P(Y|X)
-prob_dygx <- DGP_D(10000) %>% 
-  filter(X < .5) %>% 
-  count(Y < 1) %>% 
+### Conditionally independent: X and Y are conditionally independent on W.
+#P(X|W)
+prob_dxgw <- DGP_D(10000) %>% 
+  filter(W == 1) %>% 
+  count(X > 0.5) %>% 
   mutate(p = n/sum(n))
-pull(prob_dygx[2,3]) 
-#P(Y|X,W)
-prob_dygxw <- DGP_D(10000) %>% 
-  filter(X < .5, W == 1) %>% 
-  count(Y < 1) %>% 
-  mutate(p = n/sum(n))
-pull(prob_dygxw[2,3]) 
 
-# Probabilities are not equal thus Y and W are not conditionally independent on X.
+pull(prob_dxgw[2,3])
+
+
+#P(X|Y,W)
+prob_dxgyw <- DGP_D(10000) %>% 
+  filter(W == 1, Y > .5) %>% 
+  count(X > 0.5) %>% 
+  mutate(p = n/sum(n))
+pull(prob_dxgyw[2,3])
+
+
+# Probabilities are equal thus Y and X are conditionally independent on W.
 ```
 
 ## P4
@@ -365,4 +370,10 @@ histogramc <- distrib(1000000) %>%
   geom_histogram(aes(x=X), bins = 100)
 histogramc
 ```
+
+# FIGURES
+
+## P2 DAG
+
+
 
