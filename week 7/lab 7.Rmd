@@ -1,0 +1,26 @@
+---
+title: "lab 7"
+output: html_document
+date: "2023-03-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# LAB
+
+Estimator qualities:
+
+bias: E[$\hat{\psi}$] - $\psi$ : on average how far estimates are from true value.
+
+Variance: $var[psi] - E[(\hat{\psi} - E[\hat{\psi}])^2]$: how wide sampling distribution/ spread out it is.
+
+Confidence interval
+
+plug in estimator = analytical analog to expectations
+
+MSE = bias^2 + variance
+
+
