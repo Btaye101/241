@@ -19,7 +19,7 @@ Variance: $var[psi] - E[(\hat{\psi} - E[\hat{\psi}])^2]$: how wide sampling dist
 
 Confidence interval
 
-plug in estimator = analytical analog to expectations
+plug in estimator = analytically analog to expectations
 
 MSE = bias^2 + variance
 
