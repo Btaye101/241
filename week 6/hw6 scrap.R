@@ -62,4 +62,7 @@ Eyu <- mean(observed_datau$X2)
 # 3.2
 
 
+# P4
 
+
+  
