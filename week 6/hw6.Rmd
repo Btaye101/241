@@ -201,4 +201,4 @@ X = rnorm(n)
 var(X)
 ```
 
--   There is a difference since you are sampling from the DGP and thus only grabbing a subset of all possible values. This means that, through pure chance, you can grab a sample that tilts the variance slightly higher or lower. This can be rectified by increasing the sample size; as the sample size approaches infinity the variance will converge at 1.0 exactly.
+-   There is a difference since you are sampling from the DGP and thus only grabbing a subset of all possible values. This means that, through pure chance, you can grab a sample that tilts the variance slightly higher or lower than the true value. This can be rectified by increasing the sample size; as the sample size approaches infinity the variance will converge at 1.0.
