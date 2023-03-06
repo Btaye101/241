@@ -113,15 +113,92 @@ Eyu
 
 ### 1
 
--   Conditional variance is a function that returns the variance of a random variable given a particular value of another. In other words for Random Variables X and Y inputted, given a particular value for Y, it returns the variance of X. $Var(X\mid Y) = E[(X - E[X\mid Y])^2 \mid Y]$. This can be demonstrated with the below graphic:
+-   Conditional variance is a function that returns the variance of a random variable given a particular value of another. In other words for Random Variables X and Y inputted, given a particular value for Y, it returns the variance of X. $Var(X\mid Y) = E[(X - E[X\mid Y])^2 \mid Y]$. This can be demonstrated visually with the below graphic:
 
 #### Conditional Variance Figure
+
 ```{r}
-graph <- tibble(Y = rexp(10000),
+graph <- tibble(Y = runif(10000),
                 X = rnorm(10000,0,Y +.02)
                 ) %>% 
   ggplot()+
-  geom_point(aes(x=Y, y=X))
+  geom_point(aes(x=Y, y=X)) +
+  geom_vline(xintercept = .5, color = "blue") +
+  geom_vline(xintercept = .75, color = "blue") +
+  geom_vline(xintercept = 0, color = "red") +
+  geom_vline(xintercept = .25, color = "red") +
+  geom_hline(yintercept = 0, color ="green")
 graph
 ```
--   As you can see in the figure above as Y changes the variance of X changes. Specifically as Y increases the variance around X's expectation, 0, also increases creating a "fan-out" like figure.
+
+-   As you can see in the figure above as Y changes the variance of X changes. Specifically as Y increases the variance around X's expectation, 0, also increases creating a "fan-out" like figure. The variance of X when 0\<Y\<.25 (the region between the red lines) does not equal the variance of X when 0.5\<Y\<0.75 (the region between the blue lines). This difference in conditional variances can also be quantitatively demonstrated using sampling.
+
+```{r}
+dgpv <- tibble(Y = runif(10000),
+                X = rnorm(10000,0,Y +.02)
+                )
+rvv <- dgpv %>% 
+  filter(Y<0.25&Y>0) %>% 
+  pull(X) %>% 
+  var()
+
+bvv <- dgpv %>% 
+  filter(Y<0.75&Y>0.5) %>% 
+  pull(X) %>% 
+  var()
+conditional_variances <- c(rvv,bvv)
+conditional_variances
+
+```
+
+### 2
+
+Given the DGP and the scatter plot below what can you tell me about the conditional variances of X given the two colored regions below. Use how the DGP is coded and the given graph to justify your answer.(Extra credit: Show this numerically using sampling.)
+
+```{r}
+graphp <- tibble(Y = runif(10000),
+                X = rnorm(10000,0, 1)
+                ) %>% 
+  ggplot()+
+  geom_point(aes(x=Y, y=X)) +
+  geom_vline(xintercept = .5, color = "blue") +
+  geom_vline(xintercept = .75, color = "blue") +
+  geom_vline(xintercept = 0, color = "red") +
+  geom_vline(xintercept = .25, color = "red") +
+  geom_hline(yintercept = 0, color ="green")
+graphp
+```
+
+#### Solution:
+
+-   The conditional variance of the two regions should roughly be the same. If you visually inspect the scatter plot X varies from its expected value, 0, in roughly the same manner throughout the graph, meaning the variance does not change for any given interval of Y. Looking at the DGP, the standard deviation (and thus the variance) of X is not a function of Y meaning the variance of X should not meaningfully depend on the value of Y. This can be proven mathematically using sampling with the code below:
+
+```{r}
+dgp <- tibble(Y = runif(10000),
+                X = rnorm(10000,0, 1) )
+
+rv <- dgp %>% 
+  filter(Y<0.25&Y>0) %>% 
+  pull(X) %>% 
+  var()
+
+bv <- dgp %>% 
+  filter(Y<0.75&Y>0.5) %>% 
+  pull(X) %>% 
+  var()
+sol_conditional_variances <- c(rv,bv)
+sol_conditional_variances
+
+```
+
+## P6
+
+### 1
+
+```{r}
+n = 1e4
+X = rnorm(n)
+var(X)
+```
+
+-   There is a difference since you are sampling from the DGP and thus only grabbing a subset of all possible values. This means that, through pure chance, you can grab a sample that tilts the variance slightly higher or lower. This can be rectified by increasing the sample size; as the sample size approaches infinity the variance will converge at 1.0 exactly.
