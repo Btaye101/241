@@ -14,7 +14,7 @@ library(simcausal)
 
 ### 1.
 
--   That they are independent.
+-   That they are independent. $D \perp Y$.
 
 ### 2.
 
@@ -23,8 +23,8 @@ library(simcausal)
 ### 3.
 
 -   $E[Y] = E[E[Y\mid X]]$ This is arrived at through the total expectation identity stating that $E[X] = E[E[X\mid Y]]$
--   $= E[E[Y\mid D = 1, X]]$ This is arrived at through conditioning on an independent RV where $E[X\mid Y,Z] = E[X\mid Z]$ given X and Y are conditionally independent on Z, in this case Y and D are conditionally independent on X
--   $= E[\mu(X)]$ This is arrived at with through the identity provided in the above problem where $E[Y∣D=1,X]=\mu(X)$
+-   $= E[E[Y\mid D=1,X]]$ This is arrived at through conditioning on an independent RV where $E[X\mid Y,Z]=E[X\mid Z]$ given X and Y are conditionally independent on Z, in this case Y and D are conditionally independent on X
+-   $= E[\mu(X)]$This is arrived at with through the identity provided in the above problem where $E[Y\mid D=1,X] = \mu(X)$
 
 ## P2
 
@@ -54,7 +54,7 @@ eyobv
 
 -   1st bullet: correct since Y given X,U is distributed normally with a mean of $X^2 + U$ and the expectation of a normal distribution is just its mean which is $X^2 + U$ in this case
 -   2nd bullet: U cannot equal 1 given D is 1 since U and D are disjoint. If $U = 1$ then $D = (1-1) * Bern(X)$ which is equal to zero so D can only equal zero when U is 1. The same logic can be applied to the second part of this bullet; U can only equal zero when D is 1.
--   3rd bullet: Since $P(U=1\midD=1,X) = 0$ and $P(U=0\mid D=1,X) = 1$ we can substitute these values in resulting in: $E[Y\mid D=1,X] = E[Y\mid D=1,X,U=1]*0 + E[Y\mid D=1,X,U=0]* 1$ which simplifies to $E[Y\mid D=1,X] = E[Y\mid D=1,X,U=0]$. The wizard knows from the DGP that Y  X,U is normally distributed with mean $X^2 + U$ so with U being 0 and it being normally distributed its mean parameter is the expectation, $E[Y\mid D=1,X,U=0] = X^2 + 0 = X^2$. So $E[Y\mid D=1,X] = \mu(X) = X^2$.
+-   3rd bullet: Since $P(U=1\mid D=1,X) = 0$ and $P(U=0 \mid D=1,X) = 1$ we can substitute these values in resulting in: $E[Y\mid D=1,X] = E[Y\mid D=1,X,U=1]*0+E[Y\mid D=1,X,U=0]*1$ which simplifies to $E[Y\mid D=1,X]=E[Y\mid D=1,X,U=0]$. The wizard knows from the DGP that Y X,U is normally distributed with mean $X^2 + U$ so with U being 0 and it being normally distributed its mean parameter is the expectation, $E[Y\mid D=1,X,U=0] = X^2 + 0 = X^2$. So $E[Y\mid D=1,X] = \mu(X)$.
 
 ### 3.
 
@@ -88,10 +88,40 @@ Eyu
 
 ### 2.
 
--  $\text{If (X and Y indpedent)\mid Z:}$
--   $f_{X,Y\mid Z}(x,y,z) = f_{X\mid Z}(x,z) * f_{Y\mid Z}(y,z)$ - property of independence.
--   $E[X\mid Y] = \sum_{x}x*f_{X\mid Y}(x,y)$ - definition of conditional expectation.
--   $E[XY\mid Z] = \sum_{x}\sum_{y}xy*f_{X,Y\mid Z}(x,y,z)$
--   $ = \sum_{x}\sum_{y}*xy*f_{X\mid Z}(x,z) * f_{Y\mid Z}(y,z)$
--   $ = \sum_{x}xf_{X\mid Z}(x,z)* \sum_{y}*y*f_{Y\mid Z}(y,z)$
--   $ = E[X\mid Z] * E[Y\mid Z]$ 
+-   $\text{If } (X \perp Y)\mid Z$
+-   $f_{X,Y\mid Z}(x,y,z) = f_{X\mid Z}(x,z)*f_{Y\mid Z}(y,z)$ : Property of conditional independence.
+-   $E[X\mid Y] = \sum_{x}x*f_{X\mid Y}(x,y)$ : Definition of conditional expectation.
+-   $E[XY\mid Z] = \sum_{x}\sum_{y}xy*f_{X,Y\mid Z}(x,y,z)$ : Applying definition of conditional expectation.
+-   $= \sum_{x}\sum_{y}xy*f_{X\mid Z}(x,z) * f_{Y\mid Z}(y,z)$ : Applying property of conditional independence via substitution.
+-   $= \sum_{x}x*f_{X\mid Z}(x,z)* \sum_{y}y*f_{Y\mid Z}(y,z)$ : Rearranging terms.
+-   $= E[X\mid Z] * E[Y \mid Z]$ : Simplifying with definition of conditional expectation.
+
+## P4
+
+-   $C[X,Y] = E[XY] - E[X]*E[Y]$ : Definition of Covariance
+-   $C[aX+bY,Z] = E[(aX+bY) * Z] - E[aX+bY] * E[Z]$ : Applying definition
+-   $= E[aXZ + bZY] - E[aX+bY] * E[Z]$ : Distributing Z
+-   $= E[aXZ + bZY] -((E[aX] + E[bY])*E[Z])$ : linearity of expectation
+-   $= E[aXZ + bZY] -E[aX]*E[Z] - E[bY]*E[Z]$ : simplifying
+-   $= E[aXZ]+ E[bZY] -E[aX]*E[Z] - E[bY]*E[Z]$ : linearity of expectation
+-   $= aE[XZ]+ bE[ZY] -aE[X]*E[Z] - bE[Y]*E[Z]$ : factoring constants outside of expectation
+-   $= aE[XZ]-aE[X]*E[Z]+ bE[ZY]- bE[Y]*E[Z]$ : rearranging terms
+-   $= a(E[XZ]-E[X]*E[Z])+ b(E[ZY]- E[Y]*E[Z])$ : factoring constants
+-   $= aC[X,Z] + bC[Y,Z]$ : simplifying using definition of covariance
+
+## P5
+
+### 1
+
+-   Conditional variance is a function that returns the variance of a random variable given a particular value of another. In other words for Random Variables X and Y inputted, given a particular value for Y, it returns the variance of X. $Var(X\mid Y) = E[(X - E[X\mid Y])^2 \mid Y]$. This can be demonstrated with the below graphic:
+
+#### Conditional Variance Figure
+```{r}
+graph <- tibble(Y = rexp(10000),
+                X = rnorm(10000,0,Y +.02)
+                ) %>% 
+  ggplot()+
+  geom_point(aes(x=Y, y=X))
+graph
+```
+-   As you can see in the figure above as Y changes the variance of X changes. Specifically as Y increases the variance around X's expectation, 0, also increases creating a "fan-out" like figure.
