@@ -54,7 +54,7 @@ eyobv
 
 -   1st bullet: correct since Y given X,U is distributed normally with a mean of $X^2 + U$ and the expectation of a normal distribution is just its mean which is $X^2 + U$ in this case
 -   2nd bullet: U cannot equal 1 given D is 1 since U and D are disjoint. If $U = 1$ then $D = (1-1) * Bern(X)$ which is equal to zero so D can only equal zero when U is 1. The same logic can be applied to the second part of this bullet; U can only equal zero when D is 1.
--   3rd bullet: Since $P(U=1\mid D=1,X) = 0$ and $P(U=0 \mid D=1,X) = 1$ we can substitute these values in resulting in: $E[Y\mid D=1,X] = E[Y\mid D=1,X,U=1]*0+E[Y\mid D=1,X,U=0]*1$ which simplifies to $E[Y\mid D=1,X]=E[Y\mid D=1,X,U=0]$. The wizard knows from the DGP that Y X,U is normally distributed with mean $X^2 + U$ so with U being 0 and it being normally distributed its mean parameter is the expectation, $E[Y\mid D=1,X,U=0] = X^2 + 0 = X^2$. So $E[Y\mid D=1,X] = \mu(X)$.
+-   3rd bullet: Since $P(U=1\mid D=1,X) = 0$ and $P(U=0 \mid D=1,X) = 1$ we can substitute these values in resulting in: $E[Y\mid D=1,X] = E[Y\mid D=1,X,U=1]*0+E[Y\mid D=1,X,U=0]*1$ which simplifies to $E[Y\mid D=1,X]=E[Y\mid D=1,X,U=0]$. The wizard knows from the DGP that $Y\mid X,U$ is normally distributed with mean $X^2 + U$ so with U being 0 and it being normally distributed its mean parameter is the expectation, $E[Y\mid D=1,X,U=0] = X^2 + 0 = X^2$. So $E[Y\mid D=1,X] = \mu(X)$.
 
 ### 3.
 
@@ -117,7 +117,7 @@ Eyu
 
 #### Conditional Variance Figure
 
-```{r}
+```{r, fig.align='center'}
 graph <- tibble(Y = runif(10000),
                 X = rnorm(10000,0,Y +.02)
                 ) %>% 
