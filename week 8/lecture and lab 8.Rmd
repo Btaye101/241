@@ -1,0 +1,42 @@
+---
+title: "lecture abd lab 8"
+output: html_document
+date: "2023-03-07"
+---
+```{r}
+library(tidyverse)
+```
+
+```{r}
+dgp <- function (n) tibble(Z = runif(n)) %>% 
+  summarize(mean = mean(Z))
+
+density <- function(d) {
+  d %>% ggplot() +
+    geom_density(aes(x=mean))
+}
+
+sample_means <- cbind(n_10=map_df(1:100,\(x)dgp(10)),
+                       n_50=map_df(1:100,\(x)dgp(50)),
+                       n_100=map_df(1:100,\(x)dgp(100)),
+                       n_150=map_df(1:100,\(x)dgp(150)),
+                       n_250=map_df(1:100,\(x)dgp(250))
+)
+sample_means
+
+
+n10 <- map_df(1:100,\(x)dgp(10))
+n50=map_df(1:100,\(x)dgp(50))
+n100=map_df(1:100,\(x)dgp(100))
+n150=map_df(1:100,\(x)dgp(150))
+n250=map_df(1:100,\(x)dgp(250))
+               
+density(n10)
+density(n50)
+density(n100)
+density(n150)
+density(n250)
+
+
+```
+
