@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(simcausal)
 ```
+# Worked with Lucas Yoshida and Joan Shim
 
 ## P1
 
