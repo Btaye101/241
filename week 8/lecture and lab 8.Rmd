@@ -5,6 +5,7 @@ date: "2023-03-07"
 ---
 ```{r}
 library(tidyverse)
+library(magrittr)
 ```
 
 ```{r}
@@ -37,6 +38,33 @@ density(n100)
 density(n150)
 density(n250)
 
+rnorm(100) %>% 
+  sample(10,replace = TRUE)
+
+```
+
+bootstrapping
+```{r}
+boot_dif <- function(df, s) {
+s_mean <- mean(df) 
+strap_mean <-  df %>% 
+    sample(size = s, replace = TRUE) %>% 
+  mean()
+return(error <- s_mean-strap_mean)
+}
+
+boot <- function(n,df,s) {
+ error <-  map_dbl(1:n,\(x)boot_dif(df,s))
+ return(tibble(
+   sample_mean = mean(df),
+   upper_bound = sample_mean - quantile(error,probs=.025),
+   lower_bound = sample_mean - quantile(error,probs=.975)
+ ))
+}
+
+test <- tibble(X=rnorm(100))
+yup <- boot(10000, test$X ,100)
+yup
 
 ```
 
