@@ -1,9 +1,10 @@
 ---
 title: "lecture abd lab 8"
-output: html_document
+output: pdf_document
 date: "2023-03-07"
 ---
 ```{r}
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(magrittr)
 ```
@@ -66,5 +67,57 @@ test <- tibble(X=rnorm(100))
 yup <- boot(10000, test$X ,100)
 yup
 
+```
+
+# LAb 8
+
+SE derivation for known Variance: $\sigma^2$
+$\psi = \bar{X}$
+$\bar{X} = \frac{1}{n} \sum X_i$
+$var(\bar{X}) = var(\frac{1}{n}\sum X_i)$
+$var(\bar{X}) = \frac{1}{n^2}var(\sum X_i) $
+$var(\bar{X}) = \frac{1}{n^2}\sum var(X_i) $
+$var(\bar{X}) = \frac{1}{n^2} * n*\sigma^2 $
+$var(\bar{X}) = \frac{n\sigma^2 }{n^2}  $
+$var(\bar{X}) = \frac{\sigma^2 }{n}$
+$SE(\bar{X}) = \frac{\sigma}{\sqrt{n}}$
+
+CLT: if IID we good estimator is asymptotically normal
+
+Delta method: 
+
+for transformations of estimate to get transformed sampling distribution use delta method:
+
+$g(\hat{X}) = N(g(\mu),\sigma^2*(g'(\mu))^2)$
+
+
+$ \bar{X} \frac{+}{-} 1.96\frac{\sigma}{\sqrt{n}}$
+
+Bootstrapping
+no want to derive SE formula or can't
+1. Take sample calc esitmate
+2. resample from sample with replacement, calc estimate
+3. repeat
+4. have a sampling distribution from list of estimates
+5. take variance of that and take square root to get SE.
+
+
+```{r}
+estimator = function(data){ var(data$X)}
+bootstrap_estimator = function(data, estimator, B=100) {
+estimate = estimator(data)
+samples <- map_df(1:B,(.)function{slice_sample(data,prop =1,replace = T)})  # generate B bootstrap samples, estimate, compute quantiles...
+tibble(
+estimate = estimate, # the point estimate
+ci_a, # lower bound of the CI
+ci_b # upper bound of the CI
+)
+}
+```
+
+```{r}
+testy <- tibble(X= rnorm(1000))
+samples <- map_dbl(1:10,function(.){slice_sample(testy,prop =1,replace = T) %>% 
+    estimator()})
 ```
 

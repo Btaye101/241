@@ -1,0 +1,116 @@
+---
+title: "hmrk 7 Beimnet Taye"
+output: pdf_document
+date: "2023-03-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(magrittr)
+```
+
+## P1
+
+### 1
+-   The input for the estimand is the underlying total population outputs of a given RV. The output is a measure of the RV values from the total population inputted (mean, median, etc).
+
+### 2
+-   The input for the estimator is the sampled data of a given RV and the output is a measure of said data (mean, median, etc.) which is an estimate of the estimand.
+
+### 3
+-   The estimand is the true value of a measure in a population. The estimator tries to estimate the estimand using sample data.
+
+### 4.
+#### Bias:
+$Bias = \mu(\hat{\psi}) - \psi$
+$ = 2 - 5$
+$ = -3$
+#### Variance:
+$Var(\hat{\psi}) = E[\hat{\psi}^2] - E[\hat{\psi}]^2$
+$= 4-4$
+$= 0$
+
+
+## P2
+
+### 3
+
+```{r}
+dgp = function(n) {
+tibble(X = rnorm(n)) # your code here
+}
+sigma_a2_estimator = function(data) {
+n = nrow(data)
+data %$% sum((X - mean(X))^2) / n
+}
+sigma_b2_estimator = function(data) {
+n = nrow(data)
+data %$% sum((X - mean(X))^2) / (n-1)
+}
+
+bias_raw <- function(dgp,n){
+  tibble(
+    true_var = var(dgp(10000000)),
+     sample_size = n,
+    alpha  = map_dbl(1:1000, \(x)sigma_a2_estimator(dgp(n))),
+    beta  = map_dbl(1:1000, \(x)sigma_b2_estimator(dgp(n)))
+  )
+}
+
+bias_eval <- function(dgp,n){
+  bias_raw(dgp,n) %>% 
+    summarize(alpha_m = mean(alpha),
+              beta_m = mean(beta),
+              true_var = mean(true_var),
+              sample_size = mean(n),
+              bias_a = alpha_m - true_var,
+              bias_b = beta_m - true_var)
+  
+}
+
+test <- bias_raw(dgp,10)
+small <- bias_eval(dgp,10)
+small
+
+test
+large <- bias_eval(dgp,100000)
+large
+
+small_densities <- bias_raw(dgp,10) %>% 
+  ggplot() +
+  geom_density(aes(x = alpha), color = "blue") +
+  geom_density(aes(x = beta), color = "red") +
+  geom_vline(xintercept = mean(true_var), color = "green") +
+  geom_vline(aes(xintercept = mean(alpha)), color = "blue") +
+  geom_vline(aes(xintercept = mean(beta)), color = "red")
+small_densities
+
+
+large_densities <- bias_raw(dgp,100000) %>% 
+  ggplot() +
+  geom_density(aes(x = alpha), color = "blue") +
+  geom_density(aes(x = beta), color = "red") +
+  geom_vline(aes(xintercept = mean(true_var)), color = "green") +
+  geom_vline(aes(xintercept = mean(alpha)), color = "blue") +
+  geom_vline(aes(xintercept = mean(beta)), color = "red")
+large_densities
+
+true_var <- 1
+
+```
+
+-   Based off the calculated tables the bias is larger with the alpha method when the sample size is small and close to 0 when the sample is larger. With the generated densities the mean for the alpha method is farther away from the expected true value of one for the smaller sample size.
+
+### 4.
+-   The analytic proof is more robust and grounded in raw theory but is much harder to parse. The computational method is a lot more readable and intuitive but scarifies some robustness. 
+
+### 5.
+-   bias variance tradeoff. Beta method trades less bias for more variance.
+
+
+## P3
+
+
+
+
