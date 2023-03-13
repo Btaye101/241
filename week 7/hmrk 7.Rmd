@@ -9,6 +9,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(magrittr)
 library(simcausal)
+library(haven)
+library(here)
 ```
 
 ## P1
@@ -77,7 +79,6 @@ bias_eval <- function(dgp,n){
   
 }
 
-test <- bias_raw(dgp,10)
 small <- bias_eval(dgp,10)
 small
 
@@ -108,10 +109,10 @@ large_densities
 
 ```
 
--   Based off the calculated tables the bias is larger with the alpha method when the sample size is small and close to 0 when the sample is larger. With the generated densities the mean for the alpha method is farther away from the expected true value of one for the smaller sample size.
+-   Based off the calculated tables the bias is larger with the alpha method when the sample size is small and close to 0 when the sample is larger. With the generated densities the mean for the alpha method is farther away from the estimand value of one for the smaller sample size.
 
 ### 4.
--   The analytic proof is more robust and grounded in raw theory but is much harder to parse. The computational method is a lot more readable and intuitive but scarifies some robustness. 
+-   The analytic proof is more robust and grounded in raw theory but is much harder to parse through. The computational method is a lot more readable and intuitive but scarifies some robustness. 
 
 ### 5.
 -   bias variance tradeoff. Beta method trades less bias for more variance.
@@ -274,4 +275,175 @@ final
 
 #### 4.
 
-I would use the regression estimator since it has the lowest amount of bias by a fairly large margin relative to the other two estimators. Yes it would since
+-   I would use the regression estimator since it has the lowest amount of bias by a fairly large margin relative to the other two estimators. Yes it would since estimators in general are dependent on the underlying DGP. The best estimator we choose is usually based upon assumptions we make about the underlying distribution, such as how the underlying population data is distributed. If the DGP were to change our assumptions used to choose an estimator would likely no longer hold and we would have to make adjustments. 
+
+
+## P5
+
+### 1.
+-   $\sigma^2 = V[\hat{\mu}]$
+-   $= V[\frac{1}{n}\sum_{i}X_i]$
+-   $= \frac{1}{n^2}V[\sum_{i}X_i]$ Linearity of variance.
+-   $= \frac{1}{n^2}\sum_{i}V[X_i]$
+-   $= \frac{1}{n^2}V[X]*n$ The sum of the variances of an IID RV is the just the variance of the sum.
+-   $= \frac{V[X]n}{n^2}$
+-   $= \frac{V[X]}{n}$
+
+### 2.
+-   We can arrive at this since variance is defined as:
+-   $V[\hat{X}] = E[(\hat{X}-E[\hat{X}])^2]$
+-   Using the above equation we can use the plug in estimators for expectation: 
+-   $E[\hat{X}] = \frac{1}{n}\sum_{i}X_i$ 
+-   $V[\hat{X}] = \frac{1}{n}\sum_{i}(\hat{X}-(\frac{1}{n}\sum_{i}X_i))^2$
+-   Given:
+-   $\hat{\mu} = \frac{1}{n}\sum_{i}X_i $
+-   We can plug this in and we get:
+-   $V[\hat{X}] =  \frac{1}{n}\sum_{i}(\hat{X}-\hat{\mu})^2 $
+-   We can use the plug in estimator for the variance,derived in the previous question, into the equation:
+-   $\hat{\sigma^2}= \frac{V[\hat{X}]}{n}$
+-   $= \frac{\frac{1}{n}\sum_{i}(\hat{X}-\hat{\mu})^2}{n}$
+-   $= \frac{1}{n^2}\sum_{i}(\hat{X}-\hat{\mu})^2$
+-   Finally the Standard deviation of  the sampling distribution, called the standard error, is just the square root of its variance:
+-   $\sigma = \sqrt{\frac{1}{n^2}\sum_{i}(\hat{X}-\hat{\mu})^2}$
+
+### 3.
+
+```{r}
+# Diff distributions
+dgp_5 <- function(n) {
+  return(rnorm(n))
+}
+dgp_6 <- function(n) {
+  return(rexp(n))
+}
+dgp_7 <- function(n){
+  return(runif(n))
+}
+#STE Calc
+STE <- function(dgp,n) {
+  sigma <- sqrt((1/n^2)*sum((dgp-mean(dgp))^2))
+  return(sigma)
+}
+#table with interval values
+interval <- function(dgp,n, rep=100) {
+  map_df(1:rep,function(.x){
+      data <- dgp(n)
+      Sig <- STE(data,n)  
+      return(
+        tibble(
+        mu = mean(data),
+        upper = mu + 2*Sig,
+        lower = mu - 2*Sig,
+        sample_size = n
+        )
+      )
+    }
+  ) %>% 
+    mutate(row = row_number()*5)
+}
+# interval visualization
+int_visual <- function(dgp,n,rep=100){
+  interval(dgp,n,rep) %>% 
+  ggplot() + 
+  geom_segment(aes(x = lower, xend = upper, y = row, yend = row)) +
+  geom_vline(xintercept = mean(dgp(1000000)), color = "green")
+}
+
+# normal 
+# n = 100
+normal_table_100 <- interval(dgp_5,100)
+normal_table_100
+normal_visual_100 <- int_visual(dgp_5,100)
+normal_visual_100
+
+# n = 500
+normal_table_500 <- interval(dgp_5,500)
+normal_table_500
+normal_visual_500 <- int_visual(dgp_5,500)
+normal_visual_500
+# n = 1000
+normal_table_1000 <- interval(dgp_5,1000)
+normal_table_1000
+normal_visual_1000 <- int_visual(dgp_5,1000)
+normal_visual_1000
+# n = 5000
+normal_table_5000 <- interval(dgp_5,5000)
+normal_table_5000
+normal_visual_5000 <- int_visual(dgp_5,5000)
+normal_visual_5000
+# n = 10000
+normal_table_10000 <- interval(dgp_5,10000)
+normal_table_10000
+normal_visual_10000 <- int_visual(dgp_5,10000)
+normal_visual_10000
+
+# exponential
+# n = 100
+exp_table_100 <- interval(dgp_6,100)
+exp_table_100
+exp_visual_100 <- int_visual(dgp_6,100)
+exp_visual_100
+
+# n = 500
+exp_table_500 <- interval(dgp_6,500)
+exp_table_500
+exp_visual_500 <- int_visual(dgp_6,500)
+exp_visual_500
+# n = 1000
+exp_table_1000 <- interval(dgp_6,1000)
+exp_table_1000
+exp_visual_1000 <- int_visual(dgp_6,1000)
+exp_visual_1000
+# n = 5000
+exp_table_5000 <- interval(dgp_6,5000)
+exp_table_5000
+exp_visual_5000 <- int_visual(dgp_6,5000)
+exp_visual_5000
+# n = 10000
+exp_table_10000 <- interval(dgp_6,10000)
+exp_table_10000
+exp_visual_10000 <- int_visual(dgp_6,10000)
+exp_visual_10000
+
+# uniform
+# n = 100
+uni_table_100 <- interval(dgp_7,100)
+uni_table_100
+uni_visual_100 <- int_visual(dgp_7,100)
+uni_visual_100
+
+# n = 500
+uni_table_500 <- interval(dgp_7,500)
+uni_table_500
+uni_visual_500 <- int_visual(dgp_7,500)
+uni_visual_500
+# n = 1000
+uni_table_1000 <- interval(dgp_7,1000)
+uni_table_1000
+uni_visual_1000 <- int_visual(dgp_7,1000)
+uni_visual_1000
+# n = 5000
+uni_table_5000 <- interval(dgp_7,5000)
+uni_table_5000
+uni_visual_5000 <- int_visual(dgp_7,5000)
+uni_visual_5000
+# n = 10000
+uni_table_10000 <- interval(dgp_7,10000)
+uni_table_10000
+uni_visual_10000 <- int_visual(dgp_7,10000)
+uni_visual_10000
+```
+
+### 4.
+```{r}
+data = read_xpt("CDQ_H.XPT") # replace w/ appropriate file path
+prev_chest <- mean(data$CDQ001)
+prev<- data %>% 
+  count(CDQ001) %>% 
+  mutate(prev = n/sum(n))
+prev_chest <- pull(prev[1,3])
+prev_chest
+```
+
+### 5.
+-     You can try and calculate a 95% confidence interval to see if .3 is contained in he interval. If it is not then you can try to use that to say that the 30% measured is probably not the true value. Additionally you can try 
