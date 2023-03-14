@@ -12,28 +12,37 @@ library(simcausal)
 library(haven)
 library(here)
 ```
+# Worked with Joan Shim and Lucas Yoshida
 
 ## P1
 
 ### 1
+
 -   The input for the estimand is the underlying total population outputs of a given RV. The output is a measure of the RV values from the total population inputted (mean, median, etc).
 
 ### 2
+
 -   The input for the estimator is the sampled data of a given RV and the output is a measure of said data (mean, median, etc.) which is an estimate of the estimand.
 
 ### 3
+
 -   The estimand is the true value of a measure in a population. The estimator tries to estimate the estimand using sample data.
 
 ### 4.
-#### Bias:
--   $Bias = \mu(\hat{\psi}) - \psi$
--   $= 2 - 5$
--   $= -3$
-#### Variance:
--   $Var(\hat{\psi}) = E[\hat{\psi}^2] - E[\hat{\psi}]^2$
--   $= 4-4$
--   $= 0$
 
+#### Bias and Variance:
+
+-   $Bias = \mu(\hat{\psi}) - \psi$
+
+-   $= 2 - 5$
+
+-   $= -3$
+
+-   $Var(\hat{\psi}) = E[\hat{\psi}^2] - E[\hat{\psi}]^2$
+
+-   $= 4-4$
+
+-   $= 0$
 
 ## P2
 
@@ -111,15 +120,17 @@ large_densities
 -   Based off the calculated tables the bias is larger with the alpha method when the sample size is small and close to 0 when the sample is larger. With the generated densities the mean for the alpha method is farther away from the estimand value of one for the smaller sample size.
 
 ### 4.
--   The analytic proof is more robust and grounded in raw theory but is much harder to parse through. The computational method is a lot more readable and intuitive but scarifies some robustness. 
+
+-   The analytic proof is more robust and grounded in raw theory but is much harder to parse through. The computational method is a lot more readable and intuitive but scarifies some robustness.
 
 ### 5.
--   bias variance tradeoff. Beta method trades less bias for more variance.
 
+-   The beta method while less biased than the alpha method actually has a higher amount of variance. This is called the bias-variance tradeoff and might be a reason you might want to use the alpha method instead. 
 
 ## P3
 
 ### 1.
+
 ```{r}
 logistic <- function(x){
   1/(1+exp(-x))
@@ -142,7 +153,6 @@ odds_ratio
               
             
 ```
-
 
 ## P4
 
@@ -197,6 +207,7 @@ Estimand_Y
 ```
 
 ### 2.
+
 ```{r}
 
 unadjusted = function(data){
@@ -235,6 +246,7 @@ estimates
 ```
 
 ### 3.
+
 ```{r}
 bias_rawd <- function(dgp,n=500,rep=10){
     map_df(1:rep, function(.x){
@@ -274,12 +286,12 @@ final
 
 #### 4.
 
--   I would use the regression estimator since it has the lowest amount of bias by a fairly large margin relative to the other two estimators. Yes it would since estimators in general are dependent on the underlying DGP. The best estimator we choose is usually based upon assumptions we make about the underlying distribution, such as how the underlying population data is distributed. If the DGP were to change our assumptions used to choose an estimator would likely no longer hold and we would have to make adjustments. 
-
+-   I would use the regression estimator since it has the lowest amount of bias by a fairly large margin relative to the other two estimators. Yes it would since estimators in general are dependent on the underlying DGP. The best estimator we choose is usually based upon assumptions we make about the underlying distribution, such as how the underlying population data is distributed. If the DGP were to change our assumptions used to choose an estimator would likely no longer hold and we would have to make adjustments.
 
 ## P5
 
 ### 1.
+
 -   $\sigma^2 = V[\hat{\mu}]$
 -   $= V[\frac{1}{n}\sum_{i}X_i]$
 -   $=\frac{1}{n^2}V[\sum_{i}X_i]$ Linearity of variance.
@@ -289,10 +301,11 @@ final
 -   $=\frac{V[X]}{n}$
 
 ### 2.
+
 -   We can arrive at this since variance is defined as:
 -   $V[\hat{X}] = E[(\hat{X}-E[\hat{X}])^2]$
--   Using the above equation we can use the plug in estimators for expectation: 
--   $E[\hat{X}] = \frac{1}{n}\sum_{i}X_i$ 
+-   Using the above equation we can use the plug in estimators for expectation:
+-   $E[\hat{X}] = \frac{1}{n}\sum_{i}X_i$
 -   $V[\hat{X}] = \frac{1}{n}\sum_{i}(\hat{X}-(\frac{1}{n}\sum_{i}X_i))^2$
 -   Given:
 -   $\hat{\mu} = \frac{1}{n}\sum_{i}X_i$
@@ -302,7 +315,7 @@ final
 -   $\hat{\sigma^2}= \frac{V[\hat{X}]}{n}$
 -   $= \frac{\frac{1}{n}\sum_{i}(\hat{X}-\hat{\mu})^2}{n}$
 -   $= \frac{1}{n^2}\sum_{i}(\hat{X}-\hat{\mu})^2$
--   Finally the Standard deviation of  the sampling distribution, called the standard error, is just the square root of its variance:
+-   Finally the Standard deviation of the sampling distribution, called the standard error, is just the square root of its variance:
 -   $\sigma = \sqrt{\frac{1}{n^2}\sum_{i}(\hat{X}-\hat{\mu})^2}$
 
 ### 3.
@@ -434,6 +447,7 @@ uni_visual_10000
 ```
 
 ### 4.
+
 ```{r}
 data = read_xpt("CDQ_H.XPT") # replace w/ appropriate file path
 prev_chest <- mean(data$CDQ001)
@@ -445,4 +459,5 @@ prev_chest
 ```
 
 ### 5.
--     You can try and calculate a 95% confidence interval to see if .3 is contained in he interval. If it is not then you can try to use that to say that the 30% measured is probably not the true value. Additionally you can try 
+
+-   You can try and calculate a 95% confidence interval to see if .3 is contained in the interval. If it is not then you can try to use that to say that the 30% measured is probably not the true value. A caveat to this argument is that by random chance (5% with 95% CI) our sample can generate an interval that does not contain the true value which in that case can in fact be 30%.
