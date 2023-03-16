@@ -1,0 +1,15 @@
+---
+title: "lab 9"
+output: pdf_document
+date: "2023-03-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(simcausal)
+```
+
+## R Markdown
+
+

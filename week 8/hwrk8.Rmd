@@ -1,0 +1,30 @@
+---
+title: "hmwrk 8-Beimnet Taye"
+output: pdf_document
+date: "2023-03-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(simcausal)
+```
+
+## P1
+
+## P2
+
+### 1.
+-   First, The expectation,and thus its plug-in estimator, the mean, of a binary variable is just its probability. So:
+-   $\mu_1=E[Y|W=1] = P(Y|W=1)$
+-   From here we can use this conditional probability identity:
+-   $P(Y|W=1) = \frac{P(W=1,Y)}{P(W=1)}$
+- Since we already defined for binary variables Y and W that their probabilities equal their expected values we arrive at:
+-   $E[Y|W=1] = \frac{E[WY]}{E[W]}$
+-   Using plug in estimators for the expectations we arrive at:
+-   $ = \frac{\frac{1}{n}\sum_{i}WY}{\frac{1}{n}\sum_{i}W}$
+
+### 2.
+
+
+
