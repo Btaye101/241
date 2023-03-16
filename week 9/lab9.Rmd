@@ -8,8 +8,92 @@ date: "2023-03-16"
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(simcausal)
+library(magrittr)
 ```
 
 ## R Markdown
+
+$A_i = exposure = 0,1$
+$Y_i = Y_i(1)A_i + Y_i(0)(1-A_i)$
+
+-   How define ATE
+-   $E[Y(1)-Y(0)]$ 
+- $\frac{E[Y(1)]}{E[Y(0)]}$
+
+
+```{r}
+dgp <- function(n) {
+  tibble(
+  p = rnorm(n),
+  Y0 = 2+ rnorm(n,p),
+  Y1 = Y0 - 2 +rnorm(n)
+  )
+}
+
+ye <- dgp(100000)
+
+ATE <- mean(ye$Y1) - mean(ye$Y0)
+```
+
+```{r}
+logistic = function(x) 1 / (1 + exp(-x))
+
+
+
+causal_dgp_1 = function(n=100) {
+tibble(
+X = runif(n,0,1),
+A = rbern(n, 0.5),
+Y0 = logistic( rnorm(n, mean=X) ),
+Y1 = logistic( rnorm(n, mean=exp(X)) ),
+)
+}
+observable_dgp_1 = function(n=100) {
+causal_dgp_1(n) %>%
+mutate(Y = ifelse(A, Y1, Y0)) %>%
+select(-Y0, -Y1)
+}
+cause <- causal_dgp_1(1000000)
+ATE_2 <- mean(cause$Y1) - mean(cause$Y0)
+
+naive_ate_estimator = function(data) {
+data %$%
+{ mean(Y[A==1]) - mean(Y[A==0]) }
+}
+
+naive_ATE <- naive_ate_estimator(observable_dgp_1(100))
+
+map_df(1:1000,function(.x){
+  tibble(naive_ATE = observable_dgp_1(100) %>% 
+    naive_ate_estimator())
+}) %>% summarize(bias = mean(naive_ATE) - ATE_2,
+                 variance = var(naive_ATE))
+
+```
+```{r}
+causal_dgp_2 = function(n=100) {
+tibble(
+X = rnorm(n,0,1), # a covariate
+A = rbern(n, prob=1-logistic(X)),
+Y0 = rnorm(n, mean=exp(X)),
+Y1 = rnorm(n, mean=exp(X)+1),
+)
+}
+observable_dgp_2 = function(n=100) {
+causal_dgp_2(n) %>%
+mutate(Y = ifelse(A, Y1, Y0)) %>%
+select(-Y0, Y1)
+}
+cause2 <- causal_dgp_2(1000000)
+ATE_3 <- mean(cause2$Y1) - mean(cause2$Y0)
+
+map_df(1:1000,function(.x){
+  tibble(naive_ATE = observable_dgp_2(100) %>% 
+    naive_ate_estimator())
+}) %>% summarize(bias = mean(naive_ATE) - ATE_3,
+                 variance = var(naive_ATE))
+
+# confounders bias estimate ATE.
+```
 
 
