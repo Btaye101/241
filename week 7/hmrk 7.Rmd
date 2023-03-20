@@ -12,6 +12,7 @@ library(simcausal)
 library(haven)
 library(here)
 ```
+
 # Worked with Joan Shim and Lucas Yoshida
 
 ## P1
@@ -125,7 +126,7 @@ large_densities
 
 ### 5.
 
--   The beta method while less biased than the alpha method actually has a higher amount of variance. This is called the bias-variance tradeoff and might be a reason you might want to use the alpha method instead. 
+-   The beta method while less biased than the alpha method actually has a higher amount of variance. This is called the bias-variance tradeoff and might be a reason you might want to use the alpha method instead.
 
 ## P3
 
