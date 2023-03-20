@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(simcausal)
 library(magrittr)
+library(zeallot)
 ```
 
 ## P1
@@ -99,12 +100,12 @@ EW = n()/n
 ```
 
 ```{r}
-bootstrap_estimator = function(data, estimator, B=100) {
-  estimate = estimator(data)
+bootstrap_estimator = function(data, esti, B=100) {
+  estimate = esti(data)
   size <- nrow(data)
   bootstraps <- map_df(1:B,function(.x){
   boot_ratio <- slice_sample(data,n = size, replace = TRUE) %>% 
-     estimator()
+     esti()
   return(tibble(
     error = estimate - boot_ratio
     )
@@ -144,11 +145,11 @@ true_ratio
 ### 4.
 
 ```{r}
-coverage <- function(data, estimator,n=100, rep = 10){
-  true_ratio <- estimator(data(100000))
+coverage <- function(data, esti,n=100, rep = 10){
+  true_ratio <- esti(data(100000))
   samples <- map_df(1:rep,function(.x){
     dataset <- slice_sample(data(n),n = nrow(data(n)),replace = T)
-    return(bootstrap_estimator(data= dataset,estimator, B=100))
+    return(bootstrap_estimator(data= dataset,esti, B=100))
   }
   )
   samples %>% 
@@ -159,6 +160,50 @@ coverage <- function(data, estimator,n=100, rep = 10){
 
 test <- coverage(DGP_ratio,estimator)
 test
+
+```
+### 5.
+```{r}
+estimator_delta = function(data) {
+n = nrow(data)
+# estimate required sample averages
+data %>%
+mutate( # to handle rare case where all W=0 or =1
+W = factor(W, levels=c(0,1))
+) %>%
+group_by(W, .drop=F) %>%
+summarize(
+EY_W = mean(Y),
+EW = n()/n
+) %$%
+c(EY_W[W==0], EY_W[W==1], EW[W==0], EW[W==1]) %->%
+c(mu0, mu1, pi0, pi1)
+# construct the plugins
+rr = mu1/mu0
+avar = rr^2 * ((1-mu0)/(mu0*pi0) + (1-mu1)/(mu1*pi1)) # from math
+se = sqrt(avar / n)
+# return result
+tibble(
+estimate=rr,
+ci_a=rr-2*se,
+ci_b=rr+2*se
+)
+}
+
+coverage_delta <- function(data,esti=estimator_delta,rep = 10, n = 100) {
+  true_ratio <- estimator(data(10000))
+  map_df(1:rep,function(.x){
+    esti(data(n))
+    }
+  ) %>% 
+    mutate(cover = ifelse(true_ratio >= ci_a & true_ratio <= ci_b,1,0)) %$% {
+      mean(cover)
+    }
+  
+}
+
+test_delta <- coverage_delta(DGP_ratio, rep = 500)
+test_delta
 ```
 
 
