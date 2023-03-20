@@ -206,4 +206,6 @@ test_delta <- coverage_delta(DGP_ratio, rep = 500)
 test_delta
 ```
 
+### 6.
+-   Deriving the formula has better coverage on average of the true value while the bootstrap has worse coverage of the true value but is easier to implement since you don't have to do any mathematical derivations. 
 
