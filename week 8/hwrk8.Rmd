@@ -15,23 +15,28 @@ library(zeallot)
 ## P1
 
 ### 1.
+
 -   First let:
 -   $Z_i = \frac{1}{X_i}$ and $Z = \frac{1}{X}$
 -   Then we get:
 -   $\frac{1}{n}\sum_{i}(Z_i)$
 -   Since the CLT always holds no matter how Z is distributed, with a large enough sample the plug in estimator for Z will have a sampling distribution distributed in the following fashion:
--   $\frac{1}{n}\sum_{i}Z_i \sim \mathcal{N}(E[Z],\sqrt{\frac{V[Z]}{n}}) $
+-   final: $\frac{1}{n}\sum_{i}Z_i \sim \mathcal{N}(E[Z],\sqrt{\frac{V[Z]}{n}})$
 
 ### 2.
+
 -   The asymptotic variance is $V[\frac{1}{X}]$
 
 ### 3.
--   Plug in: $\frac{1}{n}\sum_{i}(\frac{1}{X_i} - \hat{\mu})^2$ 
+
+-   Plug in: $\frac{1}{n}\sum_{i}(\frac{1}{X_i} - \hat{\mu})^2$
 
 ### 4.
+
 -   Plug in: $\sqrt{\frac{\frac{1}{n}\sum_{i}(\frac{1}{X_i} - \hat{\mu})^2}{n}}$
 
 ### 5.
+
 ```{r}
 
 CI <- function(X) {
@@ -48,32 +53,32 @@ CI(rnorm(500))
 
 ```
 
-
 ## P2
 
 ### 1.
+
 -   First, The expectation,and thus its plug-in estimator, the mean, of a binary variable is just its probability. So:
 -   $\mu_1=E[Y|W=1] = P(Y|W=1)$
 -   From here we can use this conditional probability identity:
 -   $P(Y|W=1) = \frac{P(W=1,Y)}{P(W=1)}$
-- Since we already defined for binary variables Y and W that their probabilities equal their expected values we arrive at:
+-   Since we already defined for binary variables Y and W that their probabilities equal their expected values we arrive at:
 -   $E[Y|W=1] = \frac{E[WY]}{E[W]}$
 -   Using plug in estimators for the expectations we arrive at:
--   $ = \frac{\frac{1}{n}\sum_{i}WY}{\frac{1}{n}\sum_{i}W}$
-- The generalized notation with indicator functions work since the indicator function of a binary value for value w: $1_w(W)$ returns 1 if inputted W equals the set condition w and returns 0 if that statement is not true. Thus the average of an indicator function of a binary variable is just the probability of the set condition, in this case w.
+-   $= \frac{\frac{1}{n}\sum_{i}WY}{\frac{1}{n}\sum_{i}W}$
+-   The generalized notation with indicator functions work since the indicator function of a binary value for value w: $1_w(W)$ returns 1 if inputted W equals the set condition w and returns 0 if that statement is not true. Thus the average of an indicator function of a binary variable is just the probability of the set condition, in this case w.
 -   $\frac{1}{n}\sum_{i}1_w(W) = P(W=w)$
 
 ### 2.
 
--   We can code them into R, generate samples and apply these estimators. Repeat this multiple times to derive sampling distributions of the numerator and denominators and see if they become more normal and the variances decrease as you increase the sample size. 
+-   We can code them into R, generate samples and apply these estimators. Repeat this multiple times to derive sampling distributions of the numerator and denominators and see if they become more normal and the variances decrease as you increase the sample size.
 
 ### 3.
 
--   We can code $\hat{\mu}_w$ into R, generate a sample and apply this estimator. Repeat this multiple times to derive a sampling distribution of the estimate and see if it becomes more normal and the variance decreases as you increase the sample size. 
+-   We can code $\hat{\mu}_w$ into R, generate a sample and apply this estimator. Repeat this multiple times to derive a sampling distribution of the estimate and see if it becomes more normal and the variance decreases as you increase the sample size.
 
 ### 4.
--    We can code $\hat{\psi}$ into R, generate a sample and apply this estimator. Repeat this multiple times to derive a sampling distribution of the estimate and see if it becomes more normal and the variance decreases as you increase the sample size. 
 
+-   We can code $\hat{\psi}$ into R, generate a sample and apply this estimator. Repeat this multiple times to derive a sampling distribution of the estimate and see if it becomes more normal and the variance decreases as you increase the sample size.
 
 ### P3.
 
@@ -158,11 +163,13 @@ coverage <- function(data, esti,n=100, rep = 10){
     }
 }
 
-test <- coverage(DGP_ratio,estimator)
+test <- coverage(DGP_ratio,estimator, rep = 500)
 test
 
 ```
+
 ### 5.
+
 ```{r}
 estimator_delta = function(data) {
 n = nrow(data)
@@ -207,5 +214,5 @@ test_delta
 ```
 
 ### 6.
--   Deriving the formula has better coverage on average of the true value while the bootstrap has worse coverage of the true value but is easier to implement since you don't have to do any mathematical derivations. 
 
+-   Deriving the formula has better coverage on average of the true value while the bootstrap has worse coverage of the true value but is easier to implement since you don't have to do any mathematical derivations.
