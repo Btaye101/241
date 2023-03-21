@@ -29,7 +29,7 @@ library(zeallot)
 
 ### 3.
 
--   Plug in: $\frac{1}{n}\sum_{i}(\frac{1}{X_i} - \hat{\mu})^2$
+-   Plug in: $\frac{1}{n}\sum_{i}(\frac{1}{X_i} - \hat{\mu})^2$ 
 
 ### 4.
 
@@ -70,15 +70,15 @@ CI(rnorm(500))
 
 ### 2.
 
--   We can code them into R, generate samples and apply these estimators. Repeat this multiple times to derive sampling distributions of the numerator and denominators and see if they become more normal and the variances decrease as you increase the sample size.
+-   We can use the CLT theorem to demonstrate that both the numerator and denominators are asymptotically normal.
 
 ### 3.
 
--   We can code $\hat{\mu}_w$ into R, generate a sample and apply this estimator. Repeat this multiple times to derive a sampling distribution of the estimate and see if it becomes more normal and the variance decreases as you increase the sample size.
+-   We can use the delta method since it involves a ratio. 
 
 ### 4.
 
--   We can code $\hat{\psi}$ into R, generate a sample and apply this estimator. Repeat this multiple times to derive a sampling distribution of the estimate and see if it becomes more normal and the variance decreases as you increase the sample size.
+-   We can use the delta method since it involves a ratio. 
 
 ### P3.
 
