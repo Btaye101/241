@@ -11,6 +11,7 @@ library(simcausal)
 library(magrittr)
 library(zeallot)
 ```
+# Worked with Joan Shim and Lucas Yoshida
 
 ## P1
 
