@@ -1,0 +1,85 @@
+---
+title: "hwrk9 - Beimnet Taye"
+output: pdf_document
+date: "2023-03-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(magrittr)
+library(medicaldata)
+medicaldata::scurvy
+
+
+```
+
+## P1
+
+### 1.
+```{r}
+scurvy = medicaldata::scurvy %>%
+mutate(
+# collapse treatment into two groups
+citrus = forcats::fct_collapse(
+treatment,
+"TRUE" = c("cider", "dilute_sulfuric_acid", "vinegar", "citrus"),
+"FALSE" = c("sea_water", "purgative_mixture"),
+) %>%
+as.logical(),
+# turn outcome into a numeric measure
+gum_rot = gum_rot_d6 %>%
+stringr::str_sub(1, 1) %>%
+as.numeric()
+) %>%
+select(citrus, gum_rot)
+
+naive <- scurvy %>% 
+  group_by(citrus) %>% 
+  summarize(mean = mean(gum_rot))
+
+naive_ATE <- naive[2,2] - naive[1,2]
+
+naive
+naive_ATE
+
+
+```
+
+### 2.
+```{r}
+scurvy_counter <- scurvy %>% 
+  mutate(gum_rot_yes_citrus = ifelse(citrus == TRUE, gum_rot, NA),
+         gum_rot_no_citrus = ifelse(citrus == FALSE, gum_rot, NA)
+         )
+
+scurvy_counter
+
+```
+
+### 3.
+```{r}
+citrus_bad <- scurvy_counter %>% 
+  mutate(gum_rot_yes_citrus = ifelse(citrus == FALSE, 3, gum_rot),
+         gum_rot_no_citrus = ifelse(citrus == TRUE, 0, gum_rot)) 
+
+citrus_bad %$% {
+  mean(gum_rot_yes_citrus) - mean(gum_rot_no_citrus)
+} 
+
+citrus_bad
+```
+
+### 4.
+```{r}
+citrus_good <- scurvy_counter %>% 
+  mutate(gum_rot_yes_citrus = ifelse(citrus == FALSE, 0, gum_rot),
+         gum_rot_no_citrus = ifelse(citrus == TRUE, 3, gum_rot)) 
+
+citrus_good %$% {
+  mean(gum_rot_yes_citrus) - mean(gum_rot_no_citrus)
+} 
+
+citrus_good
+```
+
