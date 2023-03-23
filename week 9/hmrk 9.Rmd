@@ -111,8 +111,25 @@ Y1 = rnorm(n, mean=cos(pi*X)),
 observable_dgp_1 = function(n=100) {
 causal_dgp_1(n) %>%
 mutate(Y = ifelse(A, Y1, Y0)) %>%
-select(-Y0, Y1)
+select(-Y0, -Y1)
 }
+logistic = function(x) 1 / (1 + exp(-x))
+
+causal_dgp_2 = function(n=100) {
+tibble(
+X = runif(n,-1,1), # a covariate
+A = rbern(n, prob=logistic(X)),
+Y0 = rnorm(n, mean=sin(pi*X)+1/3),
+Y1 = rnorm(n, mean=cos(pi*X)),
+)
+}
+
+observable_dgp_2 = function(n=100) {
+causal_dgp_2(n) %>%
+mutate(Y = ifelse(A, Y1, Y0)) %>%
+select(-Y0, -Y1)
+}
+
 
 naive_ate_estimator = function(data) {
 data %$%
@@ -125,12 +142,35 @@ true_ate <- causal_dgp_1(1000000) %$% {
   mean(Y1) - mean(Y0)
 } 
 true_ate
+
 ```
 
 ### 2.
 ```{r}
-bias <- function(data, estimator, rep = 10, n = 100){
-  
+bias_ate <- function(data,true_data, estimator, rep = 10, n = 100){
+  true <- true_data(1000000) %$% {
+  mean(Y1) - mean(Y0)
+  } 
+  map_df(1:rep,function(.x){
+  return(tibble(estimate = estimator(data(n)))
+      )
+    }
+  ) %>% 
+    summarize(
+      bias = mean(estimate) - true,
+      variance = var(estimate)
+    )
 }
+
+estimate_eval <- bias_ate(observable_dgp_1,causal_dgp_1, naive_ate_estimator,rep = 1000)
+estimate_eval
 ```
 
+### 3
+```{r}
+estimate_eval2 <- bias_ate(observable_dgp_2,causal_dgp_2, naive_ate_estimator, rep =1000)
+estimate_eval2
+```
+
+### 4.
+-   The bias is higher in dgp2 but the variance is the same between the two dgps. This makes sense since looking at DGP2 covariate X affects both the outcome Y and exposure A while in DGP 1 covariate X only affects the outcome but not the exposure A. This makes X a confounder in DGP 2 but not in DGP 1 and since we are not controlling for X in either scenario the bias would be higher in the DGP where X is a confounder, in this case DGP2.
