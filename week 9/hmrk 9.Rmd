@@ -87,7 +87,11 @@ citrus_good
 ```{r}
 citrus_equal <- scurvy_counter %>% 
   mutate(gum_rot_yes_citrus = ifelse(citrus == FALSE,0, gum_rot),
-         gum_rot_no_citrus = ifelse(citrus == TRUE, 2.125, gum_rot)) 
+         gum_rot_no_citrus = ifelse(citrus == TRUE, 3, gum_rot)) 
+
+citrus_equal[7,3] = 3
+citrus_equal[8,3] = 3
+citrus_equal[11,3] = 1
 
 citrus_equal %$% {
   mean(gum_rot_yes_citrus) - mean(gum_rot_no_citrus)
