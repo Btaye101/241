@@ -71,15 +71,15 @@ CI(rnorm(500))
 
 ### 2.
 
--   We can use the CLT theorem to demonstrate that both the numerator and denominators are asymptotically normal.
+-   We can use the CLT theorem to demonstrate that both the numerator and denominators are asymptotically normal since they are both just individual means. 
 
 ### 3.
 
--   We can use the delta method since it involves a ratio. 
+-   We can use the delta method since it involves a function of means. $\hat{\mu}_w$ is a ratio of means and thus a function of means so it is appropriate to use the delta method.
 
 ### 4.
 
--   We can use the delta method since it involves a ratio. 
+-   We can use the delta method since it involves a ratio of a ratio of means.$\hat{\psi}$ is a ratio of a ratio of means so we can try to use the delta method to demonstrate asymptotic normality.
 
 ### P3.
 
