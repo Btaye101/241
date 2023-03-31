@@ -178,3 +178,12 @@ estimate_eval2
 
 ### 4.
 -   The bias is higher in dgp2 but the variance is the same between the two dgps. This makes sense since looking at DGP2 covariate X affects both the outcome Y and exposure A while in DGP 1 covariate X only affects the outcome but not the exposure A. This makes X a confounder in DGP 2 but not in DGP 1 and since we are not controlling for X in either scenario the bias would be higher in the DGP where X is a confounder, in this case DGP2.
+
+
+## P3
+
+### 1.
+-   We can't directly calculate the ATE since we are missing data the captures each individuals counterfactual outcome. In this case, we cannot have everyone do both the particular stretch and not doing said stretch. As such we can't measure every individuals outcomes under both conditions. The ATE is defined as the difference in outcomes between when everyone is doing the stretch of interest and when no one is doing the stretch of interest. 
+
+### 2.
+-   There could be unmeasured characteristics that affect the likelihood of doing that particular stretch and the occurrence and/or self-reporting of pain.For instance the prevalence of that stretch could be higher in younger people than it is in older people. Younger people typically report and/or are in less physical pain than older people usually. Age could then confound the relationship between the stretch and pain by making it seem like the stretch is helpful when it is in fact the age of individuals driving observed effect. 
