@@ -14,9 +14,12 @@ library(simcausal)
 
 ```
 
+# Worked with Joan Shim and Lucas Yoshida
+
 ## P1
 
 ### 1.
+
 ```{r}
 scurvy = medicaldata::scurvy %>%
 mutate(
@@ -47,6 +50,7 @@ naive_ATE
 ```
 
 ### 2.
+
 ```{r}
 scurvy_counter <- scurvy %>% 
   mutate(gum_rot_yes_citrus = ifelse(citrus == TRUE, gum_rot, NA),
@@ -58,6 +62,7 @@ scurvy_counter
 ```
 
 ### 3.
+
 ```{r}
 citrus_bad <- scurvy_counter %>% 
   mutate(gum_rot_yes_citrus = ifelse(citrus == FALSE, 3, gum_rot),
@@ -71,6 +76,7 @@ citrus_bad
 ```
 
 ### 4.
+
 ```{r}
 citrus_good <- scurvy_counter %>% 
   mutate(gum_rot_yes_citrus = ifelse(citrus == FALSE, 0, gum_rot),
@@ -84,6 +90,7 @@ citrus_good
 ```
 
 ### 5.
+
 ```{r}
 citrus_equal <- scurvy_counter %>% 
   mutate(gum_rot_yes_citrus = ifelse(citrus == FALSE,0, gum_rot),
@@ -103,6 +110,7 @@ citrus_equal
 ## P2
 
 ### 1.
+
 ```{r}
 causal_dgp_1 = function(n=100) {
 tibble(
@@ -150,6 +158,7 @@ true_ate
 ```
 
 ### 2.
+
 ```{r}
 bias_ate <- function(data,true_data, estimator, rep = 10, n = 100){
   true <- true_data(1000000) %$% {
@@ -171,19 +180,34 @@ estimate_eval
 ```
 
 ### 3
+
 ```{r}
 estimate_eval2 <- bias_ate(observable_dgp_2,causal_dgp_2, naive_ate_estimator, rep =1000)
 estimate_eval2
 ```
 
 ### 4.
--   The bias is higher in dgp2 but the variance is the same between the two dgps. This makes sense since looking at DGP2 covariate X affects both the outcome Y and exposure A while in DGP 1 covariate X only affects the outcome but not the exposure A. This makes X a confounder in DGP 2 but not in DGP 1 and since we are not controlling for X in either scenario the bias would be higher in the DGP where X is a confounder, in this case DGP2.
 
+-   The bias is higher in dgp2 but the variance is the same between the two dgps. This makes sense since looking at DGP2 covariate X affects both the outcome Y and exposure A while in DGP 1 covariate X only affects the outcome but not the exposure A. This makes X a confounder in DGP 2 but not in DGP 1 and since we are not controlling for X in either scenario the bias would be higher in the DGP where X is a confounder, in this case DGP2.
 
 ## P3
 
 ### 1.
--   We can't directly calculate the ATE since we are missing data the captures each individuals counterfactual outcome. In this case, we cannot have everyone do both the particular stretch and not doing said stretch. As such we can't measure every individuals outcomes under both conditions. The ATE is defined as the difference in outcomes between when everyone is doing the stretch of interest and when no one is doing the stretch of interest. 
+
+-   We can't directly calculate the ATE since we are missing data the captures each individuals counterfactual outcome. In this case, we cannot have everyone do both the particular stretch and not doing said stretch. As such we can't measure every individuals outcomes under both conditions. The ATE is defined as the difference in outcomes between when everyone is doing the stretch of interest and when no one is doing the stretch of interest.
 
 ### 2.
--   There could be unmeasured characteristics that affect the likelihood of doing that particular stretch and the occurrence and/or self-reporting of pain.For instance the prevalence of that stretch could be higher in younger people than it is in older people. Younger people typically report and/or are in less physical pain than older people usually. Age could then confound the relationship between the stretch and pain by making it seem like the stretch is helpful when it is in fact the age of individuals driving observed effect. 
+
+-   There could be unmeasured characteristics that affect the likelihood of doing that particular stretch and the occurrence and/or self-reporting of pain.For instance the prevalence of that stretch could be higher in younger people than it is in older people. Younger people typically report and/or are in less physical pain than older people usually. Age could then confound the relationship between the stretch and pain by making it seem like the stretch is helpful when it is in fact the age of individuals driving observed effect.
+
+## P4.
+
+### 1.
+
+Statistics and Causal Inference talks about the necessary components of a valid causal question under the SUTVA framework. Specifically under SUTVA a causal question can be broken up into indexed units and treatments with outcomes measured given a particular combination of units and treatments. It argues for thinking of such a framework when evaluating causal questions for further analysis. Does Water Kill attempts to address several criticisms levied against the potential outcomes approach for causal inference. The first issue addressed is the issue of vagueness inherent to causal questions to which the author mentions how the vagueness is a built in component of the potential outcomes approach. The second issue addressed is that the potential outcomes approach does not need to provide a definite yes or no to a causal question. The third issue is addressed by the author stating how the potential outcomes approach could be in fact used in non feasible interventions. Race and Sex are causes argues how race and sex could theoretically be variables that could be intervened on and that causal claims don't have to be tied to potential intervention effects.
+
+On Causes, Causal Inference, and Potential Outcomes defends the potential outcomes approach as a basis of defining causal estimands and linking data with causal estimands. Causal Inference for Social Exposures attempts to argue that quantitative causal inference should work in tandem with more qualitative methods of causal inference in order to describe causal effects as they are in the real world. On the Interpretation of do(x) emphasizes the importance of studying the causal effects of non manipulable variables and the role they play in causal inference.
+
+### 2.
+
+I mostly agree with the Does Water Kill article since it best synthesizes the issues at hand and coherently addresses each issue clearly. I believe a robust quantitative inferential framework is a beneficial thing since it forces investigators to be specific in regards to their scientific question and hypothesis.The limitation of the scope of the potential outcomes approach is a built in feature not a flaw that makes transparent the limitations and interpretability of a given finding, all of which is critical information needed when making resource allocation decisions.
