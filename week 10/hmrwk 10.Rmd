@@ -1,0 +1,146 @@
+---
+title: "hmrk 10 - Beimnet Taye"
+output: pdf_document
+date: "2023-04-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(magrittr)
+library(simcausal)
+library(dagitty)
+library(medicaldata)
+```
+
+## P1.
+
+### 1.
+-   No they cannot be confounders in this experimental set up since we have randomly assigned the treatment condition. Thus we have probably balanced both known and unknown confounders between the treatment and control groups given a large enough sample size. Without randomization Baseline heart rate would not be a confounder anyways since it doesn't affect our exposure which is corrugated metal use for roofing.
+```{r}
+dag <- dagitty("dag {
+
+
+Housing_Type -> Heart_Disease
+Baseline_Heart_Rate -> Heart_Disease
+
+               }")
+plot(dag)
+
+```
+### 2.
+-   Yes it could be confounder that affects our results since we are not randomizing the housing type anymore and baseline heart rate affects heart disease outcomes and is associated with the exposure of housing type due to having a common cause, SES.
+
+```{r}
+dagb <- dagitty("dag {
+
+SES -> Housing_Type
+SES -> Baseline_Heart_Rate
+Housing_Type -> Heart_Disease
+Baseline_Heart_Rate -> Heart_Disease
+
+
+               }")
+plot(dagb)
+```
+
+### 3.
+-   No since it only affects our exposure and does and affect our outcome. 
+
+```{r}
+dagc <- dagitty("dag {
+
+Pred_Type_Nearby_Housing -> Housing_Type <- SES <- Baseline_Heart_Rate
+Housing_Type -> Heart_Disease <- Baseline_Heart_Rate
+
+
+
+               }")
+plot(dagc)
+```
+
+## P2
+
+### 1.
+-   This is not a good idea since we have a lot of non respondents. Non-respondents could be more similar to each other than to those who did respond resulting in selection bias that would affect our estimate of the true population proportion if we were to only use the data of the respondents. The similarity among non respondents could be due to other variables such as age, sex, zip code, and occupation. For instance if younger people are more likely to use opiates and less likely to respond to the survey than older people who are less likely to use opiates then our estimate would underestimate the true population prevalence.
+
+### 2.
+-   At the core of our identification assumption is that responding to the survey (S) is independent of opiate use (Y). This is not the case however if we use the conditional randomization identity conditioning on the other covariates like zip code, sex, and occupation (X). Mathematically:
+-   $\text{For all } P(X,S,Y(1), Y(0)) \text{ where } (Y(s) \perp S | X):$
+-   $E[Y(s)] = E[E[Y|X,S=s]]$
+- This identification holds true if we have data for every stratum and there are not any unmeasured confounders.
+
+
+## P3.
+
+### 1.
+```{r}
+study_data = medicaldata::indo_rct
+
+study_data
+
+RR <- study_data %>% 
+  mutate(outcome_num = case_when(
+    outcome == "1_yes" ~ 1,
+    TRUE ~ 0
+        )
+  ) %>% 
+  group_by(rx) %>% 
+  summarize(risk = mean(outcome_num)) %$% {
+    risk[rx == "1_indomethacin"] / risk[rx == "0_placebo"] 
+  }
+
+RR
+```
+### 2.
+
+```{r}
+plug <- function(mu1,mu0,pi1,pi0) {
+  sqrt(
+    (mu1/mu0)^2 * (((1-mu0)/(mu0*pi0))+((1-mu1)/(mu1*pi1)))
+  )
+}
+
+risks <- study_data %>% 
+  mutate(outcome_num = case_when(
+    outcome == "1_yes" ~ 1,
+    TRUE ~ 0
+        )
+  ) %>% 
+  group_by(rx) %>% 
+  summarize(risk = mean(outcome_num))
+
+risks
+
+mu0 <- risks %$% {risk[rx == "0_placebo"]}
+mu1 <- risks %$% {risk[rx == "1_indomethacin"]}
+
+prob <- study_data %>% 
+  count(rx) %>% 
+  mutate(probs = n/sum(n))
+
+p1 <- prob %$% {probs[rx == "1_indomethacin"]}
+p0 <- prob %$% {probs[rx == "0_placebo"]}
+
+STE <- plug(mu1,mu0,p1,p0)
+STE
+```
+
+### 3.
+
+```{r}
+CI <- function(est, STE, level = 1.96){
+ tibble(upper = est + level * STE,
+        lower = est - level * STE)
+}
+CI(RR, STE)
+```
+
+### 4.
+-    No. We can say that the  observable causal estimand that this naive risk ratio is estimating is equal to the causal RR since exposure was randomized thus making treatment (A) independent of outcome (Y). In other words we can use the randomization identity as follows linking an observed ATE estimand with the causal ATE estimand:
+-   $A \perp Y(1)$
+-   $E[Y(1)] = E[Y|A=1]$
+- Our calculated naive RR can still be wrong when estimating the observed estimand.
+
+### 5.
+- The confidence interval includes the null of 1 thus we cannot say if the intervention (indomethacin) definitely affects incidence of pancreatits. As a result more testing is needed to see if this drug should be given to the population under the assumption that it reduces incidence of pancreatits. 
