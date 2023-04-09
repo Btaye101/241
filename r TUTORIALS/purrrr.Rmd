@@ -1,0 +1,57 @@
+---
+title: "PURRR"
+output: html_document
+date: "2023-03-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# PURRRRR
+
+# MAP FUNCTION ITERATES
+
+map_lgl for logicals
+
+map_int for integers
+
+map_dbl for doubles
+
+map_cr for characters
+
+- these work if your function returns single values
+
+- if your only ever going to use a function iteratively you can create an anynymous function
+  - a function solely defined in the map
+
+
+```{r}
+
+my_fn <- function(x,y){ 3 + x+ y}
+my_val <- 1:20
+map_dbl(my_val, function(x){
+  3 * x + 2
+})
+
+# VS
+
+map_dbl(my_val, ~ 3 * .x + 2)
+```
+
+Both are the same way to define an anon function, ~ better for one liners
+
+you can pass other arguments of function into map. good to specificy them. First arguement is the first arguemetnt of the function you are passing (.x)
+
+```{r}
+map_dbl(my_val,my_fn, y= 2)
+```
+
+With dfs. Can iterate non vectorized functons like read_csv. map_df auto binds rows by retureing a data frame.
+.id allows you to define specfic source of observations
+
+```{r}
+
+```
+
