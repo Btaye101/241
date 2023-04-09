@@ -122,25 +122,26 @@ prob <- study_data %>%
 p1 <- prob %$% {probs[rx == "1_indomethacin"]}
 p0 <- prob %$% {probs[rx == "0_placebo"]}
 
-STE <- plug(mu1,mu0,p1,p0)
-STE
+asymp<- plug(mu1,mu0,p1,p0)
+asymp
 ```
 
 ### 3.
 
 ```{r}
-CI <- function(est, STE, level = 1.96){
- tibble(upper = est + level * STE,
+CI <- function(est, asym,data,level = 1.96){
+ STE <- asym/sqrt(nrow(data))
+  tibble(upper = est + level * STE,
         lower = est - level * STE)
 }
-CI(RR, STE)
+CI(RR, asymp, data = study_data)
 ```
 
 ### 4.
--    No. We can say that the  observable causal estimand that this naive risk ratio is estimating is equal to the causal RR since exposure was randomized thus making treatment (A) independent of outcome (Y). In other words we can use the randomization identity as follows linking an observed ATE estimand with the causal ATE estimand:
+-    No. We can say that the observable causal estimand that this naive risk ratio is estimating is equal to the causal RR since exposure was randomized thus making treatment (A) independent of outcome (Y). In other words we can use the randomization identity as follows linking an observed ATE estimand with the causal ATE estimand:
 -   $A \perp Y(1)$
 -   $E[Y(1)] = E[Y|A=1]$
-- Our calculated naive RR can still be wrong when estimating the observed estimand.
+- Our calculated naive RR can still be wrong when estimating the observed RR estimand.
 
 ### 5.
-- The confidence interval includes the null of 1 thus we cannot say if the intervention (indomethacin) definitely affects incidence of pancreatits. As a result more testing is needed to see if this drug should be given to the population under the assumption that it reduces incidence of pancreatits. 
+- The confidence interval does not include the null of 1 thus the intervention (indomethacin) in this study affects incidence of pancreatits by decreasing it. As a result more testing is needed to see if this drug should be given to the population under the assumption that it reduces incidence of pancreatits but this is a promising start. 
