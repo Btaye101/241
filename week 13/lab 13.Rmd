@@ -66,5 +66,7 @@ vcovHC(fit_ad)[2,2]
 
 ```{r}
 fit3 <- lm(time.to.cmv ~ aKIRs + age + sex + age:sex) # colon interaction term like EMM
+
+#vcovBS() bootstrap
 ```
 
