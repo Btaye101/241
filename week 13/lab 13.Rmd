@@ -1,0 +1,70 @@
+---
+title: "lab 12"
+output: html_document
+date: "2023-04-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(sandwich)
+```
+
+## LAB
+
+```{r}
+#vcovHC(model) sqrt of this of variance of ceoffecient is STE
+
+library(medicaldata)
+data = medicaldata::cytomegalovirus %>%
+select(-c(21, 23:26)) %>% # remove other outcome measures
+mutate(aKIRs = aKIRs>4) # binarize the exposure
+
+#1.
+
+fit_un <- lm(time.to.cmv~aKIRs, data)
+
+Y1_un <- data %>% 
+  mutate(aKIRs = TRUE) %>% 
+  predict(fit_un, .) %>% 
+  mean()
+
+Y0_un <- data %>% 
+  mutate(aKIRs = FALSE) %>% 
+  predict(fit_un, .) %>% 
+  mean()
+
+ATE_un <- Y1_un - Y0_un
+
+STE_clas_un <- sqrt(vcov(fit_un)[2,2])
+
+STE_rob_un <- sqrt(vcovHC(fit_un)[2,2])
+
+```
+
+```{r}
+
+fit_ad <- lm(time.to.cmv~aKIRs+age+sex, data)
+
+Y1_ad <- data %>% 
+  mutate(aKIRs = TRUE) %>% 
+  predict(fit_ad, .) %>% 
+  mean()
+
+Y0_ad <- data %>% 
+  mutate(aKIRs = FALSE) %>% 
+  predict(fit_ad, .) %>% 
+  mean()
+
+ATE_ad <- Y1_ad - Y0_ad
+
+vcov(fit_ad)
+
+vcovHC(fit_ad)[2,2]
+
+```
+
+```{r}
+fit3 <- lm(time.to.cmv ~ aKIRs + age + sex + age:sex) # colon interaction term like EMM
+```
+
