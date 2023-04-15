@@ -1,0 +1,69 @@
+---
+title: "hmrwk 11 - Beimnet Taye"
+output: pdf_document
+date: "2023-04-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(magrittr)
+library(simcausal)
+```
+
+## P1
+
+-   DGP A: 1,2,4
+-   DGP B: 1,3,4
+-   DGP C: 2,4
+-   DGP D: 3
+-   DGP E: None
+
+## P2
+
+### 1.
+```{r}
+library(medicaldata)
+mean_impute = function(col) ifelse(is.na(col), mean(col, na.rm = T), col)
+study_data = medicaldata::laryngoscope %>%
+mutate(
+BMI = mean_impute(BMI),
+Mallampati = mean_impute(Mallampati)
+)
+
+un_ATE <- study_data %$% {
+  mean(total_intubation_time[Randomization == 1]) - mean(total_intubation_time[Randomization == 0])
+}
+un_ATE
+```
+
+### 2.
+```{r}
+fit <- lm(total_intubation_time~age+gender+asa+BMI+Mallampati+Randomization, study_data)
+fit
+
+Y1_hat <- study_data %>% 
+  mutate(Randomization = 1) %>% 
+  predict(fit,.) %>% 
+mean()
+
+Y0_hat <- study_data %>% 
+  mutate(Randomization = 0) %>% 
+  predict(fit,.) %>% 
+mean()
+
+ad_ATE <- mean(Y1_hat - Y0_hat)
+
+ad_ATE
+
+ye <- medicaldata::laryngoscope
+```
+
+### 3.
+-   They are mostly the same. This makes sense since this is an RCT where exposure was randomized thus confounders are evenly balanced between the two groups and do not affect the final ATE.
+
+### 4.
+-   No since this is an RCT so the predictor function will be linear. 
+
+### 5.
+-   Yes if "missingness" affected one group more than the other or the distribution of the absence of data is unequal between the two groups then imputing this data could bias our results by us systematically artificially affecting the covariate measurements of one group more than the other.
