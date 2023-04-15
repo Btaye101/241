@@ -1,0 +1,35 @@
+---
+title: "lec 12"
+output: pdf_document
+date: "2023-04-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(magrittr)
+```
+
+# Lecture
+
+```{r}
+insurance <- read_csv("https://tinyurl.com/mpcyv367") 
+
+fit <- lm(charges~., data = insurance)
+
+
+Y1_hat <- insurance %>% 
+  mutate(
+    smoker = "yes" 
+  ) %>% 
+  predict(fit, .)
+
+Y0_hat <- insurance %>% 
+  mutate(
+    smoker = "no" 
+  ) %>% 
+  predict(fit, .)
+
+mean(Y1_hat - Y0_hat)
+```
+

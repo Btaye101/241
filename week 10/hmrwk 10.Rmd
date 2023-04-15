@@ -13,6 +13,8 @@ library(dagitty)
 library(medicaldata)
 ```
 
+# Worked With Joan Shim and Lucas Yoshida
+
 ## P1.
 
 ### 1.
@@ -45,7 +47,7 @@ plot(dagb)
 ```
 
 ### 3.
--   No since it only affects our exposure and does and affect our outcome. 
+-   No since it only affects our exposure and does and affect our outcome since it is in effect randomly assigned. 
 
 ```{r}
 dagc <- dagitty("dag {
@@ -124,6 +126,9 @@ p0 <- prob %$% {probs[rx == "0_placebo"]}
 
 asymp<- plug(mu1,mu0,p1,p0)
 asymp
+
+STE <- asymp/sqrt(nrow(study_data))
+STE
 ```
 
 ### 3.
@@ -132,7 +137,8 @@ asymp
 CI <- function(est, asym,data,level = 1.96){
  STE <- asym/sqrt(nrow(data))
   tibble(upper = est + level * STE,
-        lower = est - level * STE)
+        lower = est - level * STE,
+        estimate = est)
 }
 CI(RR, asymp, data = study_data)
 ```
