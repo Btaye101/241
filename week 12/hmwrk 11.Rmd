@@ -14,7 +14,7 @@ library(simcausal)
 ## P1
 
 -   DGP A: 1,2,4
--   DGP B: 1,3,4
+-   DGP B: 1,3
 -   DGP C: 2,4
 -   DGP D: 3
 -   DGP E: None
@@ -56,7 +56,7 @@ ad_ATE <- mean(Y1_hat - Y0_hat)
 
 ad_ATE
 
-ye <- medicaldata::laryngoscope
+
 ```
 
 ### 3.
@@ -67,3 +67,20 @@ ye <- medicaldata::laryngoscope
 
 ### 5.
 -   Yes if "missingness" affected one group more than the other or the distribution of the absence of data is unequal between the two groups then imputing this data could bias our results by us systematically artificially affecting the covariate measurements of one group more than the other.
+
+
+## P3.
+
+### 1.
+-   Our plug in estimator is as follows:
+-   $\text{let } \mu(X,d) = E[Y|X,D=d]$
+-   $E[\mu(X,d)]$
+-   $\frac{1}{n}\sum_{i}\mu(X,d)$
+-   In other words the expectation of the outcome given whether they responded or not is the conditional mean of the outcome given the covariates (X) and whether or not they responded to the survey (D). We thus need a function that predicts the outcome Y given the covariates X and their response sate D. We use linear regression to estimate this predictor function which we can then use, by plugging in our data, to predict the outcomes of each individual if they had and hadn't responded to the survey. We then take the difference in the means of the predicted outcomes to get the estimated ATE. 
+
+### 2.
+-   We have to assume that the underlying data truly has a linear relationship and that we have measured all possible confounders (i.e. no unmeasured confounders).
+
+
+
+
