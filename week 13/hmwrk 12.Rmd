@@ -1,0 +1,15 @@
+---
+title: "hmwrk-12 - Beimnet Taye"
+output: pdf_document
+date: "2023-04-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(simcausal)
+library(magrittr)
+library(zeallot)
+```
+
+## P1
