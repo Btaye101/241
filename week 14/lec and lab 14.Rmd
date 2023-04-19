@@ -1,0 +1,66 @@
+---
+title: "lec and lab 14"
+output: pdf_document
+date: "2023-04-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(simcausal)
+library(medicaldata)
+library(magrittr)
+library(zeallot)
+```
+
+# Lecture
+```{r}
+rbern = \(n,p) rbinom(n,1,p)
+pink = "#F46A6E"
+colors = scale_colour_manual(
+  values=c(pink, "grey", "black")
+) 
+theme_set(theme_bw())
+
+## DATA
+data = medicaldata::blood_storage %>%
+  mutate(RBC.Age.Group = factor(RBC.Age.Group)) %>%
+  drop_na()
+data %>% glimpse()
+
+## Fitting Logistic Regression, general model that transforms lines into other things (glm) 
+## E[Y|X=x] = g(BX) "link function" g(x) is the logistic function for logistic regression
+m = glm(Recurrence ~ Age, data, family=binomial) # family specifies link function in this case binomial is logistic function.
+m
+
+coef(m)
+
+c(b0,b) %<-% coef(m) # from zealot pipe assigns multiple vars
+
+## Making Predictions
+predictions = predict(m, data, type='response') #by default predict gives you untransformed/unlinked coeffecients, need type = "response" arguement to include logistic wrapper to get predicted probabilites.
+manual_predictions = data %$% 
+  plogis(b0 + b*Age)
+
+data %>%
+  mutate(predictions = predictions) %>%
+  ggplot() + 
+  geom_point(aes(Age, Recurrence)) +
+  geom_line(aes(Age, predictions), color=pink)
+# multiple predictors
+m = glm(Recurrence ~ Age + RBC.Age.Group, data, family=binomial)
+m
+coef(m)
+predictions = predict(m, data, type='response')
+
+data %>%
+  mutate(predictions = predictions) %>%
+  ggplot() + 
+  geom_point(aes(Age, Recurrence, color=RBC.Age.Group)) +
+  geom_line(aes(Age, predictions, color=RBC.Age.Group)) + 
+  colors
+
+
+
+```
+
