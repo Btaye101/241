@@ -64,3 +64,48 @@ data %>%
 
 ```
 
+```{r}
+data <- medicaldata::blood_storage %>% 
+  mutate(RBC_exp = ifelse(RBC.Age.Group == 3 | RBC.Age.Group == 2, 0,1)) %>% 
+  drop_na()
+data
+
+fit <- glm(Recurrence ~ RBC_exp+Age+FamHx+TVol+PVol, data = data, family = binomial  )
+
+plogis(coef(fit))
+
+Y1_hat <- data %>% 
+  mutate(RBC_exp = 1) %>% 
+  predict(fit,., type = "response") %>% 
+  mean()
+
+Y0_hat <- data %>% 
+  mutate(RBC_exp = 0) %>% 
+  predict(fit,., type = "response") %>% 
+  mean()
+
+adj_RR <- Y1_hat/Y0_hat
+
+adj_RD <- Y1_hat - Y0_hat
+
+Y1_odds <- Y1_hat/(1-Y1_hat)
+
+Y0_odds <- Y0_hat/(1-Y0_hat)
+
+adj_OR <- Y1_odds/Y0_odds
+```
+# LAB
+
+```{r}
+#1
+
+A <- \(n = 600) {tibble(
+  X = runif(n),
+  A = rbern(n),
+  Y = rbern(n)
+  
+)}
+
+```
+
+
