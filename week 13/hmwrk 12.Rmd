@@ -15,7 +15,107 @@ library(zeallot)
 ## P1.
 
 ### 1.
--   The coefficient would probably decrease in magnitude, since age would soak up some of the effect that previously appeared attributable to chemo.
--   
+-   the coefficient would probably stay the same, since the correlation between age
+and chemo doesn’t matter.
+-   the std error would decrease, since adjusting for age would make the effect of
+chemo more clearly visible.
 
-## P2
+### 2.
+-   
+-   the std error would increase, since it would be hard for the model to distinguish
+between the effects of SES and chemo
+
+
+## P2.
+
+### 1.
+-   biotatistician A is correct since it is an RCT so the probability of being exposed is independent from all other predictors. This means that the effect of the drug cannot be "transferred" over to other predictors in the model due to the independence. Thus the STE of the ATE can only decrease when adding predictors.
+
+### 2.
+```{r}
+mu <- \(x,a) 2*x^2 + 3*a
+f <- \(x) 3*x^2
+
+DGP <- \(n){
+  tibble(
+    X = runif(n),
+    A = rbern(n,.5),
+    Y1 = mu(X,1) + rnorm(n,0,1),
+    Y0 = mu(X,0) + rnorm(n,0,1),
+    Y = ifelse(A,Y1,Y0)
+  )
+}
+
+DGP(100)
+
+```
+
+### 3.
+```{r}
+c_ATE <- DGP(10000) %$% {
+  mean(Y1) - mean(Y0)
+}
+c_ATE
+```
+
+### 4.
+```{r}
+lin_reg_est <- function(data) {
+  fit <- lm(Y~A+X, data)
+  mu_hat <- function(a,x) {predict(fit,tibble(A=a,X=x))}
+  ATE_est <- data %>% 
+    mutate(
+      Y1_hat = mu_hat(1,X),
+      Y0_hat = mu_hat(0,X)
+    ) %$% {
+      mean(Y1_hat-Y0_hat)
+    }
+  return(ATE_est)
+}
+
+obsv <- DGP(1000) %>% 
+  select(-Y1,-Y0) %>% 
+  lin_reg_est()
+
+lin_reg_est_m <- function(data) {
+  mdata <- data %>% 
+    mutate(M = f(X))
+  fit <- lm(Y~A+X+M, mdata)
+  mu_hat <- function(a,x,m) {predict(fit,tibble(A=a,X=x, M=m))}
+  ATE_est <- mdata %>% 
+    mutate(
+      Y1_hat = mu_hat(1,X,M),
+      Y0_hat = mu_hat(0,X,M)
+    ) %$% {
+      mean(Y1_hat-Y0_hat)
+    }
+  return(ATE_est)
+}
+
+obsvm <- DGP(1000) %>% 
+  select(-Y1,-Y0) %>% 
+  lin_reg_est_m()
+
+```
+
+### 5.
+
+```{r}
+samp <- map_df(1:1000,function(.x) {
+ data <- DGP(500) %>% 
+  select(-Y1,-Y0)
+ return(tibble(EST = lin_reg_est(data),
+               EST_M = lin_reg_est_m(data)
+               )
+        )
+  }
+)
+
+distb <- samp %>% 
+  ggplot() +
+  geom_density(aes(x = EST_M),color = "blue") +
+  geom_density(aes(x = EST),color = "red") +
+  geom_vline(xintercept = c_ATE)
+distb
+```
+
