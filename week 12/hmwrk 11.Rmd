@@ -13,7 +13,7 @@ library(simcausal)
 
 ## P1
 
--   DGP A: 1,2,4
+-   DGP A: 1,2,3,4
 -   DGP B: 1,3
 -   DGP C: 2,4
 -   DGP D: 3
