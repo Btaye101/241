@@ -10,6 +10,7 @@ library(tidyverse)
 library(simcausal)
 library(magrittr)
 library(zeallot)
+library(sandwich)
 ```
 
 ## P1.
@@ -29,12 +30,12 @@ between the effects of SES and chemo
 ## P2.
 
 ### 1.
--   biotatistician A is correct since it is an RCT so the probability of being exposed is independent from all other predictors. This means that the effect of the drug cannot be "transferred" over to other predictors in the model due to the independence. Thus the STE of the ATE can only decrease when adding predictors.
+-   biostatistician A is correct since it is an RCT so the probability of being exposed is independent from all other predictors. This means that the effect of the drug cannot be "transferred" over to other predictors in the model due to the independence. Thus the STE of the ATE can only decrease when adding predictors.
 
 ### 2.
 ```{r}
 mu <- \(x,a) 2*x^2 + 3*a
-f <- \(x) 3*x^2
+f <- \(x) 3*x^3
 
 DGP <- \(n){
   tibble(
@@ -99,7 +100,6 @@ obsvm <- DGP(1000) %>%
 ```
 
 ### 5.
-
 ```{r}
 samp <- map_df(1:1000,function(.x) {
  data <- DGP(500) %>% 
@@ -115,7 +115,103 @@ distb <- samp %>%
   ggplot() +
   geom_density(aes(x = EST_M),color = "blue") +
   geom_density(aes(x = EST),color = "red") +
-  geom_vline(xintercept = c_ATE)
+  geom_vline(aes(xintercept = mean(EST)), color = "red") +
+   geom_vline(aes(xintercept = mean(EST_M)), color = "blue")
+  geom_vline(xintercept = c_ATE, color = "green")
 distb
 ```
 
+### 6.
+-   It proves that bias is not introduced when adding the model as a predictor.
+
+## P3.
+
+### 1.
+-   
+```{r}
+library(medicaldata)
+mean_impute = function(col) ifelse(is.na(col), mean(col, na.rm = T), col)
+study_data = medicaldata::laryngoscope %>%
+mutate(
+BMI = mean_impute(BMI),
+Mallampati = mean_impute(Mallampati)
+)
+```
+
+```{r}
+fitun <- study_data %>%
+  lm(total_intubation_time ~ Randomization,.)
+
+Y1_hat3 <- study_data %>% 
+  mutate(Randomization = 1) %>% 
+  predict(fitun,.) %>% 
+  mean()
+
+Y0_hat3 <- study_data %>% 
+  mutate(Randomization = 0) %>% 
+  predict(fitun,.) %>% 
+  mean()
+
+ATE_un <- Y1_hat3-Y0_hat3
+
+ATE_un
+
+STE_un <- sqrt(vcovHC(fit)[2,2])
+
+tibble(Estimate = ATE_un, upper = ATE_un + 1.96 * STE_un, lower = ATE_un - 1.96 * STE_un )
+
+```
+
+### 2.
+```{r}
+fit_r <- study_data %>%
+  lm(total_intubation_time ~ Randomization + age + gender + asa + BMI + Mallampati,.)
+
+Y1_hat32 <- study_data %>% 
+  mutate(Randomization = 1) %>% 
+  predict(fit_r,.) %>% 
+  mean()
+
+Y0_hat32 <- study_data %>% 
+  mutate(Randomization = 0) %>% 
+  predict(fit_r,.) %>% 
+  mean()
+
+ATE_r <- Y1_hat32-Y0_hat32
+
+ATE_r
+
+STE_r <- sqrt(vcovHC(fit_r)[2,2])
+
+tibble(Estimate = ATE_r, upper = ATE_r + 1.96 * STE_r, lower = ATE_r - 1.96 * STE_r)
+```
+
+### 3.
+```{r}
+fit_c <- study_data %>%
+  lm(total_intubation_time ~ Randomization + age + gender + asa + BMI + Mallampati,.)
+
+Y1_hat33 <- study_data %>% 
+  mutate(Randomization = 1) %>% 
+  predict(fit_c,.) %>% 
+  mean()
+
+Y0_hat33 <- study_data %>% 
+  mutate(Randomization = 0) %>% 
+  predict(fit_c,.) %>% 
+  mean()
+
+ATE_c <- Y1_hat33-Y0_hat33
+
+ATE_c
+
+STE_c <- sqrt(vcov(fit_c)[2,2])
+
+tibble(Estimate = ATE_c, upper = ATE_c + 1.96 * STE_c, lower = ATE_c - 1.96 * STE_c )
+```
+
+### 4.
+-   The two adjusted SE methods are mostly the same since the study was an RCT so the predictor function behaves linearly enough to use the classical standard error. The classical method assumes a linear conditional mean function. With this being an RCT our predictor A is independent of any other potential covariate thus or predictor function will behave linearly. As such the linearity assumption is met to use the classical method and is why it is equal to the robust method in this case.Additionally the noise of the outcome is not related to our outcome and is homoscedastic. Additionally the noise of the outcome is largely normal. The unadjusted estimator has a larger standard error however than the other two adjusted methods but this makes sense since this is an RCT and as highlighted in the previous problem in an RCT the addtional predictors in the model can only decrease the variance of the ATE.  
+
+### 5.
+-   linear regression with robust SE.
