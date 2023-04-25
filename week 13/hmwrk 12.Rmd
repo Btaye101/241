@@ -13,24 +13,24 @@ library(zeallot)
 library(sandwich)
 ```
 
+# Worked with Joan Shim and Lucas Yoshida
+
 ## P1.
 
 ### 1.
--   the coefficient would probably stay the same, since the correlation between age
+-   The coefficient would probably decrease in magnitude, since age would soak up some of the effect that previously appeared attributable to chemo.
 and chemo doesn’t matter.
--   the std error would decrease, since adjusting for age would make the effect of
-chemo more clearly visible.
+-   The std error would decrease, since adjusting for age would make the effect of chemo more clearly visible.
 
 ### 2.
--   
--   the std error would increase, since it would be hard for the model to distinguish
-between the effects of SES and chemo
+-   The coefficient would probably stay the same, since SES doesn’t do much to help explain survival relative to chemo.
+-   The std error would probably stay the same, since the correlation between SES and chemo doesn’t matter.
 
 
 ## P2.
 
 ### 1.
--   biostatistician A is correct since it is an RCT so the probability of being exposed is independent from all other predictors. This means that the effect of the drug cannot be "transferred" over to other predictors in the model due to the independence. Thus the STE of the ATE can only decrease when adding predictors.
+-   Biostatistician A is correct since it is an RCT so the probability of being exposed is independent from all other predictors. This means that the effect of the drug cannot be "transferred" over to other predictors in the model due to the independence. Thus the STE of the ATE can only decrease when adding predictors. Additionally it is unlikely for the direction of the coeffecient to reverse when adding predicators in an RCT.
 
 ### 2.
 ```{r}
@@ -156,7 +156,7 @@ ATE_un <- Y1_hat3-Y0_hat3
 
 ATE_un
 
-STE_un <- sqrt(vcovHC(fit)[2,2])
+STE_un <- sqrt(vcovHC(fitun)[2,2])
 
 tibble(Estimate = ATE_un, upper = ATE_un + 1.96 * STE_un, lower = ATE_un - 1.96 * STE_un )
 
@@ -182,7 +182,6 @@ ATE_r <- Y1_hat32-Y0_hat32
 ATE_r
 
 STE_r <- sqrt(vcovHC(fit_r)[2,2])
-
 tibble(Estimate = ATE_r, upper = ATE_r + 1.96 * STE_r, lower = ATE_r - 1.96 * STE_r)
 ```
 
@@ -211,7 +210,7 @@ tibble(Estimate = ATE_c, upper = ATE_c + 1.96 * STE_c, lower = ATE_c - 1.96 * ST
 ```
 
 ### 4.
--   The two adjusted SE methods are mostly the same since the study was an RCT so the predictor function behaves linearly enough to use the classical standard error. The classical method assumes a linear conditional mean function. With this being an RCT our predictor A is independent of any other potential covariate thus or predictor function will behave linearly. As such the linearity assumption is met to use the classical method and is why it is equal to the robust method in this case.Additionally the noise of the outcome is not related to our outcome and is homoscedastic. Additionally the noise of the outcome is largely normal. The unadjusted estimator has a larger standard error however than the other two adjusted methods but this makes sense since this is an RCT and as highlighted in the previous problem in an RCT the addtional predictors in the model can only decrease the variance of the ATE.  
+-   The two adjusted SE methods are mostly the same since the study was an RCT so the predictor function behaves linearly enough to use the classical standard error. The classical method assumes a linear conditional mean function. With this being an RCT our predictor A is independent of any other potential covariate thus or predictor function will behave linearly. As such the linearity assumption is met to use the classical method and is why it is equal to the robust method in this case.Additionally the noise of the outcome is not related to our outcome and is homoscedastic. Additionally the noise of the outcome is largely normal. The unadjusted estimator has a larger standard error however than the other two adjusted methods but this makes sense since this is an RCT and as highlighted in the previous problem in an RCT the additional predictors in the model can only decrease the variance of the ATE.  
 
 ### 5.
 -   linear regression with robust SE.
