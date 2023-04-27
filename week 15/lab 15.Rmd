@@ -1,0 +1,46 @@
+---
+title: "lab 15"
+output: pdf_document
+date: "2023-04-27"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# lab
+
+
+Sigmoid function
+
+B0 determines where bump is
+
+logistic function:
+-   one unit increase in X means a B_a unit increase in the log odds of the outcome
+```{r}
+library(medicaldata)
+library(marginaleffects)
+library(sandwich)
+study_data = medicaldata::indo_rct
+
+fit <- glm(outcome~rx, indo_rct, family = "binomial")
+
+ATE <- avg_comparisons(fit, variables = "rx", vcov = "HC3", comparison = "differenceavg", hypothesis = 0 )
+
+ATE
+
+fit_a <- glm(outcome~rx + gender + amp+pep, indo_rct, family = "binomial")
+
+ATE_a <- avg_comparisons(fit_a, variables = "rx", vcov = "HC3", comparison = "differenceavg", hypothesis = 0 )
+
+ATE_a
+
+fit_s <- glm(outcome~rx + amp+pep, indo_rct, family = "binomial")
+
+ATE_s <- avg_comparisons(fit_s, variables = "rx", vcov = "HC3", comparison = "differenceavg", hypothesis = 0, by = "gender" )
+
+ATE_s
+
+
+```
+
