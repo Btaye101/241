@@ -1,0 +1,175 @@
+---
+title: "HMRK 14 - Beimnet Taye"
+output: pdf_document
+date: "2023-05-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(simcausal)
+library(medicaldata)
+library(magrittr)
+library(zeallot)
+library(marginaleffects)
+library(sandwich)
+library(lmtest)
+```
+
+## P1
+
+### 1
+```{r}
+study_data = medicaldata::indo_rct
+fit <- glm(outcome~rx, study_data, family = binomial)
+avg_comparisons(model = fit,variables = "rx",vcov = "HC3",
+                comparison =  \(hi, lo) (mean(hi)/(1 - mean(hi)))/(mean(lo)/(1 - mean(lo))) , 
+                hypothesis = 1)
+```
+### 2
+```{r}
+fit_ad <- glm(outcome~rx+amp+pep, study_data, family = binomial)
+avg_comparisons(model = fit_ad,variables = "rx",vcov = "HC3",
+                comparison =  \(hi, lo) (mean(hi)/(1 - mean(hi)))/(mean(lo)/(1 - mean(lo))) , 
+                hypothesis = 1)
+```
+
+### 3
+
+```{r}
+OR <- exp(as.numeric(coef(fit_ad)[2]))
+OR
+exp(coefci(fit_ad, vcov. = vcovHC))
+```
+
+### 4
+- 1 and 2
+
+### 5
+- 1 and 2
+
+### P2
+### 1.
+
+```{r}
+mu_A <- \(A,X) plogis(X^2 + A)
+DGP_A <- function(n){
+  tibble(
+    X = runif(n),
+    A = rbern(n, prob = 0.5),
+    Y1 = rbern(n, prob = mu_A(1,X)),
+    Y0 = rbern(n, prob = mu_A(0,X)),
+    Y = ifelse(A,Y1,Y0)
+  )
+}
+
+A <- DGP_A(10000)
+fit_a <- glm(Y~A+X, A, family = binomial)
+
+RR_TRUEA <- A %$% {
+  mean(Y1)/mean(Y0)
+}
+
+mu_B <- \(A,X) plogis(X^2 + A + X*A)
+DGP_B <- function(n){
+  tibble(
+    X = runif(n),
+    A = rbern(n, prob = 0.5),
+    Y1 = rbern(n, prob = mu_B(1,X)),
+    Y0 = rbern(n, prob = mu_B(0,X)),
+    Y = ifelse(A,Y1,Y0)
+  )
+}
+
+B <- DGP_B(10000)
+
+RR_TRUEB <- B %$% {
+  mean(Y1)/mean(Y0)
+}
+fit_b <- glm(Y~A+X, B, family = binomial)
+##############################
+A_EST <- avg_comparisons(model = fit_a,variables = "A",vcov = "HC3",
+                comparison =  "ratioavg" , 
+                hypothesis = 1)
+
+A_EST
+
+B_EST <- avg_comparisons(model = fit_b,variables = "A",vcov = "HC3",
+                comparison =  "ratioavg" , 
+                hypothesis = 1)
+
+B_EST
+tibble(A_TRUE = RR_TRUEA, A_estimate = as.numeric(A_EST[3]), B_TRUE = RR_TRUEB, B_estimate = as.numeric(B_EST[3]))
+
+```
+
+### 2.
+```{r}
+mu_C <- \(A,X) plogis(X + A)
+DGP_C <- function(n){
+  tibble(
+    X = runif(n),
+    A = rbern(n, prob = 0.5),
+    Y1 = rbern(n, prob = mu_C(1,X)),
+    Y0 = rbern(n, prob = mu_C(0,X)),
+    Y = ifelse(A,Y1,Y0)
+  )
+}
+
+
+
+mu_D <- \(A,X) plogis(X + A)
+DGP_D <- function(n){
+  tibble(
+    X = runif(n),
+    A = rbern(n, prob = plogis(X^2)),
+    Y1 = rbern(n, prob = mu_D(1,X)),
+    Y0 = rbern(n, prob = mu_D(0,X)),
+    Y = ifelse(A,Y1,Y0)
+  )
+}
+#### sampling distributions##############
+samp_C <- map_df(1:1000, function(.x) {
+  C <- DGP_C(10000)
+  fit_c <- glm(Y~A+X, C, family = binomial)
+  Est <- avg_comparisons(model = fit_c,variables = "A",vcov = "HC3",
+                comparison =  "ratioavg" , 
+                hypothesis = 1)
+  distb <- tibble(estimate = as.numeric(Est[3]))
+  return(distb)
+})
+samp_C_sd <- sd(samp_C$estimate)
+samp_D <- map_df(1:1000, function(.x) {
+  D <- DGP_D(10000)
+  fit_d <- glm(Y~A+X, D, family = binomial)
+  Est <- avg_comparisons(model = fit_d,variables = "A",vcov = "HC3",
+                comparison =  "ratioavg" , 
+                hypothesis = 1)
+  distb <- tibble(estimate = as.numeric(Est[3]))
+  return(distb)
+})
+samp_D_sd <- sd(samp_D$estimate)
+#### individual estimates#################
+C <- DGP_C(10000)
+fit_c <- glm(Y~A+X, C, family = binomial)
+EST_C <- avg_comparisons(model = fit_c,variables = "A",vcov = "HC3",
+                comparison =  "ratioavg" , 
+                hypothesis = 1)
+EST_CSE <- as.numeric(EST_C[4])
+
+
+
+D <- DGP_D(10000)
+fit_d <- glm(Y~A+X, D, family = binomial)
+EST_D <- avg_comparisons(model = fit_d,variables = "A",vcov = "HC3",
+                comparison =  "ratioavg" , 
+                hypothesis = 1)
+EST_DSE <- as.numeric(EST_D[4])
+
+### solution ##############
+
+solution <- tibble(Robust_SE_C = EST_CSE, true_samp_sd_c = samp_C_sd, Robust_SE_D = EST_DSE, true_samp_sd_d = samp_D_sd)
+solution
+
+```
+

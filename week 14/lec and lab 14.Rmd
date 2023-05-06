@@ -11,6 +11,7 @@ library(simcausal)
 library(medicaldata)
 library(magrittr)
 library(zeallot)
+library(marginaleffects)
 ```
 
 # Lecture
